@@ -1,0 +1,15 @@
+*
+!*/
+!*/*.v
+!*/*.html
+!*/README
+!*/LICENSE
+!*/deps.svg
+!*/_CoqProject
+!*/Makefile
+!*/impdriver.ml
+!*/common
+!*/common/*
+!*/.devcontainer
+!*/.devcontainer/*
+!.gitignore
