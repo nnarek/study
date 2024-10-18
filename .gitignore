@@ -1,4 +1,6 @@
 *
 !software-foundations
 !software-foundations/*
+!dafny-tutorial
+!dafny-tutorial/*
 !.gitignore
