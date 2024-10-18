@@ -183,11 +183,17 @@ Theorem andb_eq_orb :
   forall (b c : bool),
   (andb b c = orb b c) ->
   b = c.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  destruct b; destruct c; try reflexivity; try discriminate.
+Qed.
+
+Search (forall n, n+0=n).
 
 Theorem add_assoc : forall n m p : nat,
     n + (m + p) = (n + m) + p.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  induction n; try reflexivity; simpl; intros; rewrite <- IHn; reflexivity.
+Qed.
 
 Fixpoint nonzeros (lst : list nat) :=
   match lst with
@@ -198,7 +204,9 @@ Fixpoint nonzeros (lst : list nat) :=
 
 Lemma nonzeros_app : forall lst1 lst2 : list nat,
   nonzeros (lst1 ++ lst2) = (nonzeros lst1) ++ (nonzeros lst2).
-Proof. (* FILL IN HERE *) Admitted.
+Proof. 
+  induction lst1; intros; try reflexivity; destruct x; simpl; try apply IHlst1; f_equal; apply IHlst1.
+Qed.
 
 (** [] *)
 
@@ -283,7 +291,9 @@ Qed.
 
 Theorem add_assoc' : forall n m p : nat,
     n + (m + p) = (n + m) + p.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. 
+  induction n; [reflexivity | simpl; intros; rewrite <- IHn; reflexivity].
+Qed.
 
 (** [] *)
 
@@ -352,7 +362,9 @@ Qed.
     Prove that 100 is even. Your proof script should be quite short. *)
 
 Theorem ev100: ev 100.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  repeat constructor. 
+Qed.
 
 (** [] *)
 
@@ -586,8 +598,38 @@ Qed.
 
 Lemma re_opt_match' : forall T (re: reg_exp T) s,
   s =~ re -> s =~ re_opt re.
-Proof.
-(* FILL IN HERE *) Admitted.
+Proof.  
+  intros T re s M.
+  induction M as [| x'
+      | s1 re1 s2 re2 Hmatch1 IH1 Hmatch2 IH2
+      | s1 re1 re2 Hmatch IH | re1 s2 re2 Hmatch IH
+      | re | s1 s2 re Hmatch1 IH1 Hmatch2 IH2];
+  simpl; 
+  try constructor.
+  -destruct re1; 
+    try (inversion IH1; simpl; destruct re2; apply IH2; reflexivity);
+    destruct re2; 
+      try (inversion IH2; reflexivity); 
+      try (inversion IH2; rewrite app_nil_r; apply IH1);
+      (apply MApp; [apply IH1 | apply IH2 ]).
+  -destruct re1;
+    try (inversion IH; reflexivity);
+    (destruct re2;
+      try (apply IH; reflexivity);
+      (apply MUnionL; apply IH)).
+  -destruct re1;
+    try (apply IH; reflexivity);
+    (destruct re2;
+      try (inversion IH; reflexivity);
+      (apply MUnionR; apply IH)).
+  -destruct re;
+    constructor.
+  -destruct re;
+    try (inversion IH1; reflexivity);
+    try (inversion IH1; inversion IH2; apply MEmpty; reflexivity);
+    (apply star_app; [apply MStar1; apply IH1 | apply IH2]).
+Qed.
+
 (* Do not modify the following line: *)
 Definition manual_grade_for_re_opt : option (nat*string) := None.
 (** [] *)
@@ -922,20 +964,20 @@ Qed.
 
 Theorem plus_id_exercise_from_basics : forall n m o : nat,
   n = m -> m = o -> n + m = m + o.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. lia. Qed.
 
 Theorem add_assoc_from_induction : forall n m p : nat,
     n + (m + p) = (n + m) + p.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. lia. Qed.
 
 Theorem S_injective_from_tactics : forall (n m : nat),
   S n = S m ->
   n = m.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. lia. Qed.
 
 Theorem or_distributes_over_and_from_logic : forall P Q R : Prop,
     P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
-Proof. (* FILL IN HERE *) Admitted.
+Proof. intuition. Qed.
 
 (** [] *)
 
@@ -1134,10 +1176,43 @@ Qed.
     very long proof, and shorten it, rather than starting with
     [re_opt_match']; but, either way can work. *)
 
+Create HintDb re_db.
+Hint Constructors reg_exp : re_db.
+Hint Constructors exp_match : re_db.
+Hint Resolve star_app : re_db.
+
 Lemma re_opt_match'' : forall T (re: reg_exp T) s,
   s =~ re -> s =~ re_opt re.
 Proof.
-(* FILL IN HERE *) Admitted.
+intros T re s M.
+induction M as [| x'
+    | s1 re1 s2 re2 Hmatch1 IH1 Hmatch2 IH2
+    | s1 re1 re2 Hmatch IH | re1 s2 re2 Hmatch IH
+    | re | s1 s2 re Hmatch1 IH1 Hmatch2 IH2];
+simpl; 
+try constructor.
+-destruct re1; 
+  try (inversion IH1; simpl; destruct re2; auto with re_db; reflexivity);
+  destruct re2; 
+    try (inversion IH2; reflexivity); 
+    try (inversion IH2; rewrite app_nil_r; auto);
+    auto with re_db.
+-destruct re1;
+  try (inversion IH; reflexivity);
+  (destruct re2;
+    auto with re_db).
+-destruct re1;
+  try (auto with re_db);
+  (destruct re2;
+    try (inversion IH; reflexivity);
+    auto with re_db).
+-destruct re;
+  auto with re_db.
+-destruct re;
+  try (inversion IH1; reflexivity);
+  try (inversion IH1; inversion IH2; auto with re_db; reflexivity);
+  auto with re_db.
+Qed.
 (* Do not modify the following line: *)
 Definition manual_grade_for_re_opt_match'' : option (nat*string) := None.
 (** [] *)
@@ -1372,7 +1447,12 @@ Qed.
 
 Theorem andb3_exchange :
   forall b c d, andb (andb b c) d = andb (andb b d) c.
-Proof. (* FILL IN HERE *) Admitted.
+Proof.
+  intros.
+  destructpf b;
+  destructpf c;
+  destructpf d.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (andb_true_elim2)
@@ -1394,16 +1474,14 @@ Qed.
     own, improved version of [destructpf]. Use it to prove the
     theorem. *)
 
-(*
-Ltac destructpf' x := ...
-*)
+Ltac destructpf' x := destruct x; simpl; try (intros H; rewrite H); try reflexivity.
 
 (** Your one-shot proof should need only [intros] and
     [destructpf']. *)
 
 Theorem andb_true_elim2' : forall b c : bool,
     andb b c = true -> c = true.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. intros b c. destructpf' b. destructpf' c. Qed.
 
 (** Double-check that [intros] and your new [destructpf'] still
     suffice to prove this earlier theorem -- i.e., that your improved
@@ -1411,7 +1489,7 @@ Proof. (* FILL IN HERE *) Admitted.
 
 Theorem andb3_exchange' :
   forall b c d, andb (andb b c) d = andb (andb b d) c.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. intros b c d. destructpf' b. destructpf' c; destructpf' d. Qed.
 (** [] *)
 
 (* ================================================================= *)

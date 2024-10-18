@@ -208,15 +208,18 @@ Proof. reflexivity. Qed.
    sure your solution satisfies the test that follows. *)
 
 Definition pup_to_n : com
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+:= <{ Y := 0;
+      Z := 0;
+      while (0 <> X)
+      do
+        Y := Y + X;
+        X := X - 1
+      end }>.
 
 Example pup_to_n_1 :
   test_ceval (X !-> 5) pup_to_n
   = Some (0, 15, 0).
-(* FILL IN HERE *) Admitted.
-(* 
 Proof. reflexivity. Qed.
-*)
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (peven)
@@ -225,9 +228,18 @@ Proof. reflexivity. Qed.
     sets [Z] to [1] otherwise.  Use [test_ceval] to test your
     program. *)
 
-(* FILL IN HERE
+Example peven :
+     test_ceval (X !-> 5)
+     <{ Y := 0;
+        Z := X;
+        while (2 <= Z)
+        do
+          Z := Z - 2
+        end
+        }>
 
-    [] *)
+     = Some (5, 0, 1).
+Proof. reflexivity. Qed.
 
 (* ################################################################# *)
 (** * Relational vs. Step-Indexed Evaluation *)
@@ -305,6 +317,27 @@ Proof.
 Definition manual_grade_for_ceval_step__ceval_inf : option (nat*string) := None.
 (** [] *)
 
+(* in general this is false statement*)
+Theorem ceval_step_none: forall i2 i1 st c,
+  S i1 <= i2 -> 
+  ceval_step st c (S i1) = None ->
+  ceval_step st c i2 = None.
+Proof.
+  induction i2.
+  -intros. reflexivity. 
+  -intros i1 st c Hl H. destruct c.
+    +simpl. destruct i1. 
+      *
+  Restart.
+  induction i2.
+  -intros. auto.
+  -intros. destruct c.
+    +simpl in *. discriminate.
+    +simpl in *. discriminate.
+    +simpl in H0. simpl. destruct (ceval_step st c1 i1).
+Abort.
+
+
 Theorem ceval_step_more: forall i1 i2 st st' c,
   i1 <= i2 ->
   ceval_step st c i1 = Some st' ->
@@ -353,14 +386,36 @@ induction i1 as [|i1']; intros i2 st st' c Hle Hceval.
 
     Finish the following proof.  You'll need [ceval_step_more] in a
     few places, as well as some basic facts about [<=] and [plus]. *)
-
+Search (forall n m : nat, (n <=? m) = false <-> m < n).
+Search (forall n m : nat, (S n <= m) -> (n <= m)).
 Theorem ceval__ceval_step: forall c st st',
       st =[ c ]=> st' ->
       exists i, ceval_step st c i = Some st'.
 Proof.
   intros c st st' Hce.
   induction Hce.
-  (* FILL IN HERE *) Admitted.
+  -exists 1. reflexivity.
+  -exists 1. subst. reflexivity.
+  -destruct IHHce1. destruct IHHce2. destruct (x <=? x0) eqn:Hx.
+    +exists (S x0). apply leb_le in Hx. apply (ceval_step_more _ _ _ _ _ Hx) in H. simpl. destruct (ceval_step st c1 x0) eqn:Hc.
+      *inversion H. subst. assumption.
+      *discriminate.
+    +exists (S x). simpl. apply leb_gt in Hx. unfold "<" in Hx. destruct (ceval_step st c1 x) eqn:Hc.
+      *apply Le.le_Sn_le_stt in Hx. apply (ceval_step_more _ _ _ _ _ Hx) in H0. inversion H. subst. assumption.
+      *discriminate.
+  -destruct IHHce. exists (S x). simpl. rewrite H. assumption.
+  -destruct IHHce. exists (S x). simpl. rewrite H. assumption.
+  -exists 1. simpl. rewrite H. reflexivity.
+  -destruct IHHce1. destruct IHHce2. exists (S x0). simpl. rewrite H. destruct (ceval_step st c x0) eqn:Hc.
+    +destruct (x <=? x0) eqn:Hx. apply leb_le in Hx. apply (ceval_step_more _ _ _ _ _ Hx) in H0.
+      *rewrite H0 in Hc. inversion Hc. subst. assumption.
+      *apply leb_gt in Hx. unfold "<" in Hx. apply Le.le_Sn_le_stt in Hx. apply (ceval_step_more _ _ _ _ _ Hx) in Hc. rewrite H0 in Hc. inversion Hc. subst. assumption.
+    +destruct (x <=? x0) eqn:Hx. apply leb_le in Hx. apply (ceval_step_more _ _ _ _ _ Hx) in H0. 
+      *rewrite H0 in Hc. inversion Hc.
+      *apply leb_gt in Hx. unfold "<" in Hx. apply Le.le_Sn_le_stt in Hx. destruct x0. 
+        --simpl in *. discriminate.
+        (* --assert (ceval_step st c x = None) as Hcontr by apply (ceval_step_none _ _ _ _ Hx Hc). rewrite H0 in Hcontr. discriminate. *)
+Admitted.
 (** [] *)
 
 Theorem ceval_and_ceval_step_coincide: forall c st st',
