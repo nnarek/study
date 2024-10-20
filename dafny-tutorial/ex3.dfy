@@ -2,6 +2,8 @@
 
 method Abs(x: int) returns (y: int)
   // Add a precondition here so that the method verifies.
+  requires x == -1//y==x never will be satisfiable and y==-x will be satisfiable only when x==-1
+
   // Don't change the postconditions.
   ensures 0 <= y
   ensures 0 <= x ==> y == x
@@ -11,6 +13,8 @@ method Abs(x: int) returns (y: int)
 }
 method Abs2(x: int) returns (y: int)
   // Add a precondition here so that the method verifies.
+  requires false//means that posconditions never can be satisfiable, so function never can be called (we also can write x==0 && x==1 or any other statement which is always false)
+
   // Don't change the postconditions.
   ensures 0 <= y
   ensures 0 <= x ==> y == x

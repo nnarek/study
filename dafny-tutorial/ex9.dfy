@@ -13,9 +13,11 @@ method ComputeFib(n: nat) returns (b: nat)
   var a := 1;
   b := 0;
   while i < n
-    // Fill in the invariants here.
+    invariant 0 <= i <= n
+    invariant a == fib(i + 1)
+    invariant b == fib(i)
   {
-    a, b := b, a + b;
+    a, b := a + b, a;
     i := i + 1;
   }
 }

@@ -3,10 +3,15 @@
 method m(n: nat)
 {
   var i: int := 0;
-  while i < n  // Change this. What happens?
+  while i != n
     invariant 0 <= i <= n
   {
     i := i + 1;
   }
+
+  //at the end dafny will know that
+  //0 <= i <= n
+  //n == i
+  //which is satisfiable only if i==n
   assert i == n;
 }

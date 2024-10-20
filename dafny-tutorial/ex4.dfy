@@ -2,8 +2,8 @@
 
 function max(a: int, b: int): int
 {
-  0 // Fill in an expression here.
+  if a < b then b else a
 }
 method Testing() {
-  // Add assertions to check max here.
+  assert max(4,5)==5;
 }
