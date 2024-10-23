@@ -200,7 +200,12 @@ Hint Unfold stuck : core.
 Example some_term_is_stuck :
   exists t, stuck t.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  exists (scc tru).
+  unfold stuck,step_normal_form,not.
+  split; intros.
+  - destruct H. inversion H. inversion H1.
+  - inversion H; inversion H0. inversion H2.
+Qed.
 (** [] *)
 
 (** However, although values and normal forms are _not_ the same in this
@@ -213,7 +218,11 @@ Proof.
 Lemma value_is_nf : forall t,
   value t -> step_normal_form t.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold step_normal_form,not.
+  induction t; intros; inversion H; destruct H0;
+  try solve_by_inverts 1.
+  inversion H0. inversion H1. apply IHt; eauto.
+Qed.
 
 (** (Hint: You will reach a point in this proof where you need to
     use an induction to reason about a term that is known to be a
@@ -229,11 +238,26 @@ Proof.
 
     Use [value_is_nf] to show that the [step] relation is also
     deterministic. *)
-
+(*TODO make proof short*)
 Theorem step_deterministic:
   deterministic step.
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  unfold deterministic.
+  intros x y1 y2 H1.
+  generalize dependent y2.
+  induction H1; intros y2 H2; inversion H2; subst;
+  try (solve_by_invert);
+  try reflexivity.
+  - apply IHstep in H5. subst. reflexivity.
+  - apply IHstep in H0. subst. reflexivity.
+  - inversion H1. subst. exfalso. apply (value_is_nf _ (or_intror H)). eexists. eauto.
+  - inversion H1. subst. exfalso. apply (value_is_nf _ (or_intror H0)). eexists. eauto.
+  - apply IHstep in H0. subst. reflexivity.
+  - inversion H1. subst. exfalso. apply (value_is_nf _ (or_intror H)). eexists. eauto.
+  - inversion H1. subst. exfalso. apply (value_is_nf _ (or_intror H0)). eexists. eauto.
+  - apply IHstep in H0. subst. reflexivity.
+Qed.
+
 (** [] *)
 
 (* ================================================================= *)
@@ -339,7 +363,11 @@ Example succ_hastype_nat__hastype_nat : forall t,
   |-- <{succ t}> \in Nat ->
   |-- t \in Nat.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros t H.
+  inversion H;
+  try discriminate.
+  subst. assumption.
+Qed.
 (** [] *)
 
 (* ----------------------------------------------------------------- *)
@@ -400,7 +428,16 @@ Proof.
     + (* t1 can take a step *)
       destruct H as [t1' H1].
       exists (<{ if t1' then t2 else t3 }>). auto.
-  (* FILL IN HERE *) Admitted.
+  - destruct IHHT.
+    + left. destruct (nat_canonical _ HT H); auto.
+    + right. destruct H as [x H]. exists <{ succ x }>. auto.
+  - destruct IHHT.
+    + destruct (nat_canonical _ HT H); right; eauto.
+    + destruct H as [x H]. right. eauto.
+  - destruct IHHT.
+    + destruct (nat_canonical _ HT H); right; eauto.
+    + destruct H as [x H]. right. eauto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (finish_progress_informal)
