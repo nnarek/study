@@ -506,7 +506,10 @@ Proof.
       + (* ST_IfFalse *) assumption.
       + (* ST_If *) apply T_If; try assumption.
         apply IHHT1; assumption.
-    (* FILL IN HERE *) Admitted.
+    - inversion HE. auto.
+    - inversion HE; try auto. subst. inversion HT. assumption.
+    - inversion HE; auto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (finish_preservation_informal)
@@ -557,6 +560,7 @@ Theorem preservation' : forall t t' T,
   t --> t' ->
   |-- t' \in T.
 Proof with eauto.
+
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
@@ -605,8 +609,26 @@ Theorem subject_expansion:
   (forall t t' T, t --> t' /\ |-- t' \in T -> |-- t \in T)
   \/
   ~ (forall t t' T, t --> t' /\ |-- t' \in T -> |-- t \in T).
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof.  
+  left.
+  intros.
+  destruct H as [Hs HT].
+  generalize dependent t.
+  induction HT; intros.
+  - inversion Hs; subst.
+    + constructor.
+      * constructor.
+      * constructor.
+      * admit. (*here I am realized that "if" can have different types depending on condition *)
+  Restart.
+  right.
+  unfold not.
+  intros H.
+  assert (<{ if true then true else 0 }> --> <{ true }> /\ |-- <{ true }> \in Bool) as Ht by (split; constructor).
+  specialize (H _ _ _ Ht) as Hf.
+  inversion Hf.
+  solve_by_invert.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (variation1)
