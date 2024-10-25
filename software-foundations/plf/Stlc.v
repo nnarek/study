@@ -490,15 +490,65 @@ Check <{[x:=true] x}>.
 Inductive substi (s : tm) (x : string) : tm -> tm -> Prop :=
   | s_var1 :
       substi s x (tm_var x) s
-  (* FILL IN HERE *)
+  | s_var2 : forall w, 
+      w <> x -> 
+      substi s x (tm_var w) (tm_var w)
+  | s_abs1 : forall t T,
+      substi s x <{\x:T, t}> <{\x:T, t}>
+  | s_abs2 : forall w t ts T, 
+      w <> x -> 
+      substi s x t ts -> 
+      substi s x <{\w:T, t}> <{\w:T, ts}>
+  | s_app : forall t1 ts1 t2 ts2,
+      substi s x t1 ts1 -> 
+      substi s x t2 ts2 -> 
+      substi s x <{t1 t2}> <{ts1 ts2}>
+  | s_true :
+      substi s x <{true}> <{true}>
+  | s_false :
+      substi s x <{false}> <{false}>
+  | s_if : forall t1 ts1 t2 ts2 t3 ts3,
+      substi s x t1 ts1 -> 
+      substi s x t2 ts2 -> 
+      substi s x t3 ts3 -> 
+      substi s x <{if (t1) then (t2) else (t3)}> <{if (ts1) then (ts2) else (ts3)}> 
 .
 
 Hint Constructors substi : core.
-
+Search ((?x =? ?y)%string = false <-> _).
 Theorem substi_correct : forall s x t t',
   <{ [x:=s]t }> = t' <-> substi s x t t'.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros s x t t'.
+  split.
+  - intros. 
+    subst. induction t; simpl.
+    + unfold subst. destruct (x =? s0)%string eqn:Hx. 
+      * apply eqb_eq in Hx. subst. constructor.
+      * constructor. apply eqb_neq in Hx. auto.
+    + constructor; assumption.
+    + destruct (x =? s0)%string eqn:Hx.
+      * apply eqb_eq in Hx. subst. constructor.
+      * apply eqb_neq in Hx. constructor; auto. 
+    + constructor.
+    + constructor.
+    + constructor; assumption.
+  - intros.
+    induction H; simpl;
+    try (subst; reflexivity).
+    + destruct (x =? x)%string eqn:Hx.
+      * reflexivity.
+      * apply eqb_neq in Hx. exfalso. auto.
+    + destruct (x =? w)%string eqn:Hx.
+      * apply eqb_eq in Hx. exfalso. auto.
+      * reflexivity.
+    + destruct (x =? x)%string eqn:H.
+      * reflexivity.
+      * apply eqb_neq in H. exfalso. auto.
+    + destruct (x =? w)%string eqn:Hx.
+      * apply eqb_eq in Hx. exfalso. auto.
+      * subst. reflexivity.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -692,13 +742,18 @@ Lemma step_example5 :
        <{idBBBB idBB idB}>
   -->* idB.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  eapply multi_step.
+  - repeat constructor.
+  - eapply multi_step.
+    + repeat constructor.
+    + simpl. constructor.
+Qed.
+
 
 Lemma step_example5_with_normalize :
        <{idBBBB idBB idB}>
   -->* idB.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. normalize.  Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -844,7 +899,13 @@ Example typing_example_2_full :
           (y (y x)) \in
     (Bool -> (Bool -> Bool) -> Bool).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  repeat constructor.
+  apply T_App with <{ Bool }>.
+  - constructor. reflexivity.
+  - apply T_App with <{ Bool }>.
+    + constructor. reflexivity.
+    + constructor. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (typing_example_3)
@@ -865,7 +926,13 @@ Example typing_example_3 :
                (y (x z)) \in
       T.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  exists <{((Bool -> Bool) -> (Bool -> Bool) -> Bool -> Bool)}>.
+  try eauto 30. (* TODO why do not works *)
+  repeat constructor.
+  eapply T_App.
+  - constructor. reflexivity.
+  - eapply T_App; constructor; reflexivity.
+Qed.
 (** [] *)
 
 (** We can also show that some terms are _not_ typable.  For example,
@@ -894,6 +961,24 @@ Proof.
   discriminate H1.
 Qed.
 
+Example typing_nonexample_1' :
+  ~ exists T,
+      empty |--
+        \x:Bool,
+            \y:Bool,
+               (x y) \in
+        T.
+Proof.
+  intros H. destruct H as [T H].
+  inversion H. subst.
+  inversion H5. subst.
+  inversion H6. subst.
+  inversion H3. subst.
+  compute in H2.
+  inversion H2.
+Qed.
+
+
 (** **** Exercise: 3 stars, standard, optional (typing_nonexample_3)
 
     Another nonexample:
@@ -907,6 +992,20 @@ Example typing_nonexample_3 :
         empty |--
           \x:S, x x \in T).
 Proof.
+  unfold not.
+  intros H.
+  destruct H as [S H].
+  destruct H as [T H].
+  inversion H. subst.
+  inversion H5. subst.
+  inversion H6. subst. 
+  inversion H2. subst.
+  inversion H3. subst.
+  inversion H4. subst.
+  (* "inversion H1." does not work, this statement is true when S = Bool -> Bool -> ... infinite function, which can not exists*)
+  (* rewrite H1 in H1. *)
+  
+  
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
