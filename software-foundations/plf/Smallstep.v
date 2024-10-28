@@ -2024,8 +2024,37 @@ Definition compiler_is_correct_statement' : Prop
 
 Definition compiler_is_correct_statement : Prop
 := forall (st: state) (e : aexp), stack_multistep st ((s_compile e), []) ([],[aeval st e]).
-(* multi_trans
-Theorem prog_app_mulpi_trans  *)
+
+Theorem prog_app_mulpi_trans : forall st xp xs yp ys,
+  stack_multistep st (xp, []) ([],xs) -> 
+  stack_multistep st (yp, []) ([],ys) ->
+  stack_multistep st (xp++yp, []) ([],xs++ys).
+Proof.
+  unfold stack_multistep.
+  intros.
+  generalize dependent ys.
+  generalize dependent yp.
+  remember (xp, []) as p.
+  remember ([], xs) as s.
+  induction H; intros.
+  - subst. inversion Heqs. subst. simpl. assumption.
+  - subst. apply IHmulti.
+    + inversion H0; subst.
+      * admit.
+      * admit.
+    + reflexivity.
+    + assumption.
+  Restart.
+  unfold stack_multistep.
+  induction xp; intros.
+  - inversion H; subst.
+    + simpl. assumption.
+    + inversion H1.
+  - simpl in *. inversion H. subst. inversion H1.
+    + subst. eapply multi_step.
+      * constructor.
+      * 
+Admitted.
 
 Theorem compiler_is_correct : compiler_is_correct_statement.
 Proof.
@@ -2035,7 +2064,11 @@ Proof.
   - eapply multi_step; constructor.
   - inversion IHe1. subst. destruct (s_compile e1). 
     * solve_by_invert.
-    * destruct y. simpl.  eapply SS_Plus.
+    * destruct y. simpl. inversion H. 
+      + eapply multi_step.
+        ++ constructor.
+        ++ subst.
+
 (* FILL IN HERE *) Admitted.
 (** [] *)
 
