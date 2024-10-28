@@ -3,4 +3,6 @@
 !software-foundations/*
 !dafny-tutorial
 !dafny-tutorial/*
+!plfa
+!plfa/*
 !.gitignore
