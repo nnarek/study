@@ -1,0 +1,3 @@
+[submodule "plfa"]
+	path = plfa
+	url = https://github.com/nnarek/plfa_solutions
