@@ -987,6 +987,16 @@ Qed.
           empty |-- \x:S, x x \in T).
 *)
 
+
+Theorem recursive_types_does_not_exists : forall (T1 T2 : ty), T2 <> <{ T2 -> T1 }>.
+Proof.
+  unfold not.
+  intros.
+  induction T2.
+  - inversion H.
+  - inversion H. subst. auto.
+Qed.
+
 Example typing_nonexample_3 :
   ~ (exists S T,
         empty |--
@@ -1004,9 +1014,14 @@ Proof.
   inversion H4. subst.
   (* "inversion H1." does not work, this statement is true when S = Bool -> Bool -> ... infinite function, which can not exists*)
   (* rewrite H1 in H1. *)
-  
-  
-  (* FILL IN HERE *) Admitted.
+
+  (* induction T2.
+  - inversion H1.
+  - inversion H1. subst. *)
+
+  apply recursive_types_does_not_exists in H1.
+  auto.
+Qed.
 (** [] *)
 
 End STLC.
