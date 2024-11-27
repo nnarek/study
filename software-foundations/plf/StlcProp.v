@@ -871,7 +871,7 @@ Definition manual_grade_for_stlc_variation3 : option (nat*string) := None.
       - Progress
 (* become false, because if we have f : Bool -> Bool then f (t1 t2) will will be well typed and will have Bool type, but it is not value and have no step  *)
       - Preservation
-(* remains true *)
+(* remains true, TODO give strong arguments, now I have only absence of conterexamples *)
 *)
 (** [] *)
 
@@ -895,7 +895,7 @@ Definition manual_grade_for_stlc_variation3 : option (nat*string) := None.
       - Progress
 (* become false, because "false false" is not value and have no next step *)
       - Preservation
-(* remains true *)
+(* remains true, TODO give strong arguments, now I have only absence of conterexamples *)
 *)
 (** [] *)
 
@@ -917,7 +917,7 @@ Definition manual_grade_for_stlc_variation3 : option (nat*string) := None.
       - Progress
 (* become false, because if we have f : Bool -> Bool then "f lm" (where lm is lambda from rule) will well typed but will be stuck *)
       - Preservation
-(* remains true *)
+(* remains true, TODO give strong arguments, now I have only absence of conterexamples *)
 *)
 (** [] *)
 
@@ -1057,12 +1057,14 @@ Inductive step : tm -> tm -> Prop :=
       t1 --> t1' ->
       <{t1 t2}> --> <{t1' t2}>
   | sapp2 : forall t1 t2 t2',
+      value t1 ->
       t2 --> t2' ->
       <{t1 t2}> --> <{t1 t2'}>
   | smul1 : forall t1 t1' t2,
       t1 --> t1' ->
       <{t1 * t2}> --> <{t1' * t2}>
   | smul2 : forall t1 t2 t2',
+      value t1 ->
       t2 --> t2' ->
       <{t1 * t2}> --> <{t1 * t2'}>
   (*TODO why this one does not works*)
@@ -1087,12 +1089,6 @@ Inductive step : tm -> tm -> Prop :=
   | sif1 : forall t1 t2 t3 t1',
       t1 --> t1' ->
       <{if0 t1 then t2 else t3}> --> <{if0 t1' then t2 else t3}>
-  | sif2 : forall t1 t2 t3 t2',
-      t2 --> t2' ->
-      <{if0 t1 then t2 else t3}> --> <{if0 t1 then t2' else t3}>
-  | sif3 : forall t1 t2 t3 t3',
-      t3 --> t3' ->
-      <{if0 t1 then t2 else t3}> --> <{if0 t1 then t2 else t3'}>
   | sifTrue : forall t2 t3,
       <{if0 0 then t2 else t3}> --> <{t2}>
   | sifFalse : forall t2 t3 n,
