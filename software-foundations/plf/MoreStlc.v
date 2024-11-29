@@ -670,7 +670,17 @@ Set Default Goal Selector "!".
            else if (pred x)=0 then 0
            else 1 + (halve (pred (pred x)))
 
-    (* FILL IN HERE *)
+
+
+
+    (* halve = fix (\halve':Nat->Nat,
+                    \x:Nat,
+                          if x=0 then 0
+                          else if (pred x)=0 then 0
+                          else 1 + (halve' (pred (pred x)))) *)
+
+
+
 *)
 (** [] *)
 
@@ -680,9 +690,29 @@ Set Default Goal Selector "!".
     through to reduce to a normal form (assuming the usual reduction
     rules for arithmetic operations).
 
-    (* FILL IN HERE *)
+
+
+
+    fix F 1
+[-->] 
+    (\x. if x=0 then 1 else x * (fix F (pred x))) 1
+[-->] 
+    if 1=0 then 1 else 1 * (fix F (pred 1))
+[-->] 
+    1 * (fix F (pred 1))
+[-->] 
+    1 * (fix F 0)
+[-->] 
+    1 * (if 0=0 then 1 else 0 * (fix F (pred 0)))
+[-->] 
+    1 * (1)
+[-->] 
+    1
+
 *)
 (** [] *)
+
+
 
 (** The ability to form the fixed point of a function of type [T->T]
     for any [T] has some surprising consequences.  In particular, it
@@ -1141,12 +1171,18 @@ Fixpoint subst (x : string) (s : tm) (t : tm) : tm :=
   (* Complete the following cases. *)
 
   (* pairs *)
-  (* FILL IN HERE *)
+  | <{(t1 , t2)}> =>
+    <{([x := s]t1 , [x := s]t2)}>
+  | <{ t.fst }> =>
+    <{ ([x := s]t).fst }>
+  | <{ t.snd }> =>
+    <{ ([x := s]t).snd }>
   (* let *)
-  (* FILL IN HERE *)
+  | <{ let y = t1 in t2 }> =>
+    if String.eqb x y then <{ let y = [x := s]t1 in t2 }> else <{ let y = [x := s]t1 in [x := s]t2 }>
   (* fix *)
-  (* FILL IN HERE *)
-  | _ => t  (* ... and delete this line when you finish the exercise *)
+  | <{ fix t }> =>
+    <{ fix [x := s]t }>
   end
 
 where "'[' x ':=' s ']' t" := (subst x s t) (in custom stlc).
@@ -1155,26 +1191,20 @@ where "'[' x ':=' s ']' t" := (subst x s t) (in custom stlc).
 Example substeg1 :
   <{ [z:=0] (let w = z in z) }> = <{ let w = 0 in 0 }>.
 Proof.
-(*
   reflexivity.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Example substeg2 :
   <{ [z:=0] (let w = z in w) }> = <{ let w = 0 in w }>.
 Proof.
-(*
   reflexivity.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Example substeg3 :
   <{ [z:=0] (let y = succ 0 in z) }> = <{ let y = succ 0 in 0 }>.
 Proof.
-(*
   reflexivity.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 (** [] *)
 
@@ -1295,11 +1325,37 @@ Inductive step : tm -> tm -> Prop :=
   (* Add rules for the following extensions. *)
 
   (* pairs *)
-  (* FILL IN HERE *)
+  | ST_Pair1 : forall t1 t1' t2,
+         t1 --> t1' ->
+         <{(t1 , t2)}> --> <{(t1' , t2)}>
+  | ST_Pair2 : forall v1 t2 t2',
+         value v1 ->
+         t2 --> t2' ->
+         <{(v1 , t2)}> --> <{(v1 , t2')}>
+  | ST_PairFstStep : forall t1 t2,
+         t1 --> t2 ->
+         <{t1.fst}> --> <{ t2.fst }>
+  | ST_PairSndStep : forall t1 t2,
+         t1 --> t2 ->
+         <{t1.snd}> --> <{ t2.snd }>
+  | ST_PairFst : forall t1 t2,
+         <{(t1 , t2).fst}> --> <{ t1 }>
+  | ST_PairSnd : forall t1 t2,
+         <{(t1 , t2).snd}> --> <{ t2 }>
+        
   (* let *)
-  (* FILL IN HERE *)
+  | ST_Let1 : forall y t1 t1' t2,
+         t1 --> t1' ->
+         <{let y = t1 in t2}> --> <{let y = t1' in t2}>
+  | ST_Let2 : forall y v1 t2,
+         value v1 ->
+         <{let y = v1 in t2}> --> <{[y:=v1]t2}>
   (* fix *)
-  (* FILL IN HERE *)
+  | ST_Fix1 : forall t t',
+         t --> t' ->
+         <{fix t}> --> <{fix t'}>
+  | ST_FixAbs : forall f T t,
+         <{fix (\f:T, t)}> --> <{[f:=(fix (\f:T, t))]t}>
 
   where "t '-->' t'" := (step t t').
 
@@ -1382,12 +1438,38 @@ Inductive has_type : context -> tm -> ty -> Prop :=
   (* Add rules for the following extensions. *)
 
   (* pairs *)
-  (* FILL IN HERE *)
+  | T_Pair : forall Gamma t1 t2 T1 T2,
+      Gamma |-- t1 \in T1 ->
+      Gamma |-- t2 \in T2 ->
+      Gamma |-- (t1 , t2) \in (T1 * T2)
+  | T_Fst : forall Gamma t T1 T2,
+      Gamma |-- t \in (T1 * T2) ->
+      Gamma |-- t.fst \in T1
+  | T_Snd : forall Gamma t T1 T2,
+      Gamma |-- t \in (T1 * T2) ->
+      Gamma |-- t.snd \in T2 
   (* let *)
-  (* FILL IN HERE *)
+  (* my first wrong definition, auto tactic can not do typechecking from this
+  | T_Let : forall Gamma y t1 t2 T,
+      Gamma |-- [y:=t1]t2 \in T ->
+      Gamma |-- let y = t1 in t2 \in T   *)
+  | T_Let : forall Gamma y t1 t2 T1 T2,
+      (y |-> T1 ; Gamma) |-- t2 \in T2 ->
+      Gamma |-- t1 \in T1 ->
+      Gamma |-- let y = t1 in t2 \in T2
+      
   (* fix *)
-  (* FILL IN HERE *)
-
+  (* do not work for fact because after applying T_Fix we lost information about type of f
+  | T_Fix : forall Gamma f t T R,
+      Gamma |-- t \in (T -> R) ->
+      Gamma |-- fix (\f:(T -> R), t) \in (T -> R) *)
+  (* do not work for multiargument functions 
+  | T_Fix : forall Gamma t T R,
+      Gamma |-- t \in ((T -> R) -> (T -> R)) ->
+      Gamma |-- fix t \in (T -> R) *)
+  | T_Fix : forall Gamma t T,
+      Gamma |-- t \in (T -> T) ->
+      Gamma |-- fix t \in T
 where "Gamma '|--' t '\in' T" := (has_type Gamma t T).
 
 (** [] *)
@@ -1483,15 +1565,13 @@ Proof.
      to increase the max search depth of [auto] from the
      default 5 to 10. *)
   auto 10.
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Example reduces :
   tm_test -->* 5.
 Proof.
-(*
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End Numtest.
 
@@ -1505,15 +1585,13 @@ Definition tm_test :=
 
 Example typechecks :
   empty |-- tm_test \in Nat.
-Proof. unfold tm_test. eauto. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto. Qed.
 
 Example reduces :
   tm_test -->* 6.
 Proof.
-(*
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End ProdTest.
 
@@ -1529,15 +1607,13 @@ Definition tm_test :=
 Example typechecks :
   empty |-- tm_test \in Nat.
 Proof. unfold tm_test. eauto.
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Example reduces :
   tm_test -->* 6.
 Proof.
-(*
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End LetTest.
 
@@ -1550,15 +1626,13 @@ Definition tm_test :=
 Example typechecks :
   empty |-- tm_test \in Nat.
 Proof. unfold tm_test. eauto.
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Example reduces :
   tm_test -->* 6.
 Proof.
-(*
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End LetTest1.
 
@@ -1574,15 +1648,13 @@ Definition tm_test :=
 
 Example typechecks :
   empty |-- tm_test \in Nat.
-Proof. unfold tm_test. eauto. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto. Qed.
 
 Example reduces :
   tm_test -->* 5.
 Proof.
-(*
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End Sumtest1.
 
@@ -1605,15 +1677,13 @@ Definition tm_test :=
 
 Example typechecks :
   empty |-- tm_test \in (Nat * Nat).
-Proof. unfold tm_test. eauto 10. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto 10. Qed.
 
 Example reduces :
   tm_test -->* <{(5, 0)}>.
 Proof.
-(*
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End Sumtest2.
 
@@ -1635,15 +1705,13 @@ Definition tm_test :=
 
 Example typechecks :
   empty |-- tm_test \in Nat.
-Proof. unfold tm_test. eauto. (* FILL IN HERE *) Admitted.
+Proof. unfold tm_test. eauto. Qed.
 
 Example reduces :
   tm_test -->* 25.
 Proof.
-(*
   unfold tm_test. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End ListTest.
 
@@ -1663,15 +1731,13 @@ Definition fact :=
 
 Example typechecks :
   empty |-- fact \in (Nat -> Nat).
-Proof. unfold fact. auto 10. (* FILL IN HERE *) Admitted.
+Proof. unfold fact. auto 10. Qed.
 
 Example reduces :
   <{fact 4}> -->* 24.
 Proof.
-(*
   unfold fact. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End FixTest1.
 
@@ -1689,16 +1755,14 @@ Definition map :=
 Example typechecks :
   empty |-- map \in
     ((Nat -> Nat) -> ((List Nat) -> (List Nat))).
-Proof. unfold map. auto 10. (* FILL IN HERE *) Admitted.
+Proof. unfold map. auto 10. Qed.
 
 Example reduces :
   <{map (\a:Nat, succ a) (1 :: 2 :: (nil Nat))}>
   -->* <{2 :: 3 :: (nil Nat)}>.
 Proof.
-(*
   unfold map. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 End FixTest2.
 
@@ -1715,24 +1779,35 @@ Definition equal :=
 
 Example typechecks :
   empty |-- equal \in (Nat -> Nat -> Nat).
-Proof. unfold equal. auto 10. (* FILL IN HERE *) Admitted.
+Proof. unfold equal. auto 10. Qed.
 
 Example reduces :
   <{equal 4 4}> -->* 1.
 Proof.
-(*
   unfold equal. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
+
+Example reduces_step_by_step :
+  <{equal 4 4}> -->* 1.
+Proof.
+  unfold equal. eapply multi_step.
+  - constructor. constructor. eapply ST_FixAbs. 
+  - eapply multi_step.
+    + simpl. constructor. constructor. constructor.
+    + simpl. eapply multi_step. 
+      * constructor. constructor. 
+      * simpl. eapply multi_step. 
+        -- eapply ST_If0_Nonzero. 
+        -- normalize.
+Qed.
+
 (* GRADE_THEOREM 0.25: reduces *)
 
 Example reduces2 :
   <{equal 4 5}> -->* 0.
 Proof.
-(*
   unfold equal. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
 (* GRADE_THEOREM 0.25: reduces2 *)
 
 End FixTest3.
@@ -1751,15 +1826,29 @@ Definition eotest :=
 
 Example typechecks :
   empty |-- eotest \in (Nat * Nat).
-Proof. unfold eotest. eauto 30. (* FILL IN HERE *) Admitted.
+Proof. unfold eotest. eauto 30. Qed.
 
 Example reduces :
   eotest -->* <{(0, 1)}>.
 Proof.
-(*
   unfold eotest. eauto 10. normalize.
-*)
-(* FILL IN HERE *) Admitted.
+Qed.
+
+Example reduces_step_by_step :
+<{ (fix
+  (\eo: ((Nat -> Nat) * (Nat -> Nat)),
+    (\n:Nat, if0 n then 1 else (eo.snd (pred n)),
+      \n:Nat, if0 n then 0 else (eo.fst (pred n))))).snd 1 }> -->* <{(1)}>.
+Proof.
+  unfold eotest. 
+  eapply multi_step.
+  - constructor. constructor. eapply ST_FixAbs. 
+  - simpl. eapply multi_step. 
+    + eapply ST_App1. eapply ST_PairSnd. 
+    + eapply multi_step.
+      * constructor. constructor.
+      * simpl. normalize.
+Qed.
 
 End FixTest4.
 End Examples.
@@ -1784,6 +1873,8 @@ End Examples.
       2. t --> t' for some t'.
 
     Proof: By induction on the given typing derivation. *)
+
+
 Theorem progress : forall t T,
      empty |-- t \in T ->
      value t \/ exists t', t --> t'.
@@ -1927,12 +2018,22 @@ Proof with eauto.
   (* Complete the proof. *)
 
   (* pairs *)
-  (* FILL IN HERE *)
+  - destruct IHHt1...  
+    + destruct IHHt2... right. destruct H0...
+    + destruct H...
+  - destruct IHHt...
+    + right. inversion H; subst; try solve_by_invert...
+    + right. destruct H...
+  - destruct IHHt...
+    + right. inversion H; subst; try solve_by_invert...
+    + right. destruct H...
   (* let *)
-  (* FILL IN HERE *)
+  - destruct IHHt2... destruct H. right...  
   (* fix *)
-  (* FILL IN HERE *)
-(* FILL IN HERE *) Admitted.
+  - destruct IHHt...
+    + right. inversion H; subst; try solve_by_invert...
+    + destruct H. right...
+Qed.
 
 (** [] *)
 
@@ -2044,8 +2145,11 @@ Proof with eauto.
         assumption.
 
   (* Complete the proof. *)
-
-  (* FILL IN HERE *) Admitted.
+  (* tm_let *)
+  - destruct (eqb_spec x s); subst...
+    + rewrite update_shadow in H5...
+    + rewrite update_permute in H5...
+Qed.
 
 (** [] *)
 
@@ -2090,12 +2194,13 @@ Proof with eauto.
   (* Complete the proof. *)
 
   (* fst and snd *)
-  (* FILL IN HERE *)
+  - inversion HT...
+  - inversion HT...
   (* let *)
-  (* FILL IN HERE *)
+  - eapply substitution_preserves_typing...
   (* fix *)
-  (* FILL IN HERE *)
-(* FILL IN HERE *) Admitted.
+  - eapply substitution_preserves_typing... inversion HT...
+Qed.
 
 (** [] *)
 
