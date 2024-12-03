@@ -1339,8 +1339,12 @@ Inductive step : tm -> tm -> Prop :=
          t1 --> t2 ->
          <{t1.snd}> --> <{ t2.snd }>
   | ST_PairFst : forall t1 t2,
+         value t1 ->
+         value t2 ->
          <{(t1 , t2).fst}> --> <{ t1 }>
   | ST_PairSnd : forall t1 t2,
+         value t1 ->
+         value t2 ->
          <{(t1 , t2).snd}> --> <{ t2 }>
         
   (* let *)
@@ -1844,7 +1848,7 @@ Proof.
   eapply multi_step.
   - constructor. constructor. eapply ST_FixAbs. 
   - simpl. eapply multi_step. 
-    + eapply ST_App1. eapply ST_PairSnd. 
+    + eapply ST_App1. eapply ST_PairSnd; constructor.
     + eapply multi_step.
       * constructor. constructor.
       * simpl. normalize.
