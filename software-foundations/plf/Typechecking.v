@@ -403,7 +403,7 @@ Fixpoint type_check (Gamma : context) (t : tm) : option ty :=
       | _ => fail
       end
   end.
-  (* TODO where is subtyping rule *)
+  
 (* Do not modify the following line: *)
 Definition manual_grade_for_type_check_defn : option (nat*string) := None.
 (** [] *)
