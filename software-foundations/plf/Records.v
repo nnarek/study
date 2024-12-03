@@ -417,7 +417,22 @@ Lemma typing_example_2 :
   empty |-- (\a : ( i1 : (A -> A) :: i2 : (B -> B) :: nil), a --> i2)
             ( i1 := (\a : A, a) :: i2 := (\a : B,a ) :: nil )  \in (B -> B).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply T_App with <{{  "i1" : A -> A ::  "i2" : B -> B :: nil }}>.
+  - apply T_Abs.
+    + eauto.
+    + apply T_Proj with <{{  "i1" : A -> A ::  "i2" : B -> B :: nil }}>.
+      * eauto 10.
+      * simpl. reflexivity.
+  - apply T_RCons.
+    + eauto.
+    + apply T_RCons.
+      * eauto.
+      * apply T_RNil.
+      * constructor.
+      * constructor.
+    + eauto.
+    + eauto.
+Qed.
 
 Example typing_nonexample :
   ~ exists T,
@@ -425,7 +440,12 @@ Example typing_nonexample :
        ( i1 := (\a : B, a) :: a ) \in
                T.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold not.
+  intros.
+  destruct H.
+  inversion H. 
+  inversion H7.
+Qed.
 
 Example typing_nonexample_2 : forall y,
   ~ exists T,
@@ -433,7 +453,12 @@ Example typing_nonexample_2 : forall y,
      (\a : ( i1 : A  :: nil ), a --> i1 )
       ( i1 := y :: i2 := y :: nil )  \in T.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros y. unfold not; intros; destruct H.
+  inversion H. subst.
+  inversion H4. subst.
+  inversion H2. subst.
+  inversion H6.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
