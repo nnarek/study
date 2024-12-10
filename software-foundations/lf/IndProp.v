@@ -2834,6 +2834,65 @@ Qed.
      forall l, l = rev l -> pal l.
 *)
 
+Lemma list_back_inversion : forall {X : Type} (l : list X), 
+  l = [] \/ exists y l', l = l' ++ [y].
+  induction l.
+  - auto.
+  - right. destruct IHl; subst.
+    + exists x. exists []. reflexivity.
+    + destruct H. destruct H. subst. exists x0. exists (x::x1). reflexivity.
+Qed. 
+
+Theorem list_2_step_induction: forall (X : Type) (P : list X -> Prop),
+  P [] -> (forall x, P [x]) -> (forall x y (l : list X), P l -> P ([x] ++ l ++ [y])) -> forall l' : list X, P l'.
+Proof.
+  simpl.
+  induction l'.
+  - assumption.
+  - destruct (list_back_inversion l').
+    + subst. eauto.
+    + destruct H2. destruct H2. subst. apply H1. 
+Abort.
+
+Fail Fixpoint list_2_step_induction' (X : Type) (P : list X -> Prop)
+(p0 : P []) (fx : forall x, P [x]) (fxy : forall x y (l : list X), P l -> P ([x] ++ l ++ [y])) (l' : list X) : P l' :=
+  match l' with 
+  | [] => p0
+  | a::t' =>  match rev t' with 
+            | [] => fx a
+            | b::t => a
+            end
+  end. 
+
+
+
+
+
+
+Fixpoint nat_2_step_ind (P : nat -> Prop)
+(p0 : P 0) (p1 : P 1) (pn2 : forall n, P n -> P (S (S n)) ) (n : nat) : P n :=
+  match n with 
+  |0 => p0
+  |1 => p1
+  |S (S n'') => pn2 n'' (nat_2_step_ind P p0 p1 pn2 n'')
+  end. 
+
+Theorem list_2_step: forall (X : Type) (P : list X -> Prop),
+  P [] -> (forall x, P [x]) -> (forall x y (l : list X), P l -> P (x :: l ++ [y])) -> forall (l : list X), P l.
+Proof.
+  intros X P p0 px pxy l.
+  remember (length l) as n.
+  generalize dependent l.
+  induction n using nat_2_step_ind;
+  intros; destruct l; auto.
+  - simpl in *. discriminate.
+  - inversion Heqn. destruct l; auto. simpl in *. discriminate.
+  - rewrite <- (rev_involutive X l) in *. destruct (rev l); auto.
+    simpl in *. apply pxy. apply IHn. rewrite app_length in *. rewrite add_comm in Heqn. simpl in *. injection Heqn as Heqn. assumption. 
+Qed.
+
+Search (rev (?l1 ++ ?l2)). 
+Search (_ ++ _ = _ ++ _).
 Theorem palindrome_converse: forall {X: Type} (l: list X),
     l = rev l -> pal l.
 Proof.
@@ -2865,8 +2924,25 @@ Proof.
   Restart.
   induction l.
   -admit.
-  -simpl. remember (rev l) as rl.     
-  (* FILL IN HERE *) Admitted.
+  -simpl. remember (rev l) as rl.    
+  Restart.
+  induction l.
+  -intros. apply pal_e.
+  -simpl. intros. destruct (rev l) eqn:E.
+    + inversion H. subst. constructor. 
+    + simpl in H. inversion H. subst.
+  Restart.
+  intros X l.
+  apply (list_2_step X (fun l => l = rev l -> pal l)); intros; try constructor.
+  simpl in *. rewrite rev_app_distr in H0. 
+  simpl in *. inversion H0. subst. constructor. apply H. 
+  apply (f_equal _ _ rev) in H3. simpl in *. 
+  repeat rewrite rev_app_distr in H3. simpl in *. 
+  inversion H3. rewrite rev_involutive in H2. rewrite H2. reflexivity.
+Qed.
+
+
+
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced, optional (NoDup)
