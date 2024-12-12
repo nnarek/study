@@ -2007,7 +2007,6 @@ Qed.
     encoded in Coq without assuming additional axioms. *)
 
 
-(* TODO understand what is saying here *)
 (** **** Exercise: 3 stars, standard (excluded_middle_irrefutable)
 
     Proving the consistency of Coq with the general excluded middle
@@ -2029,13 +2028,12 @@ Proof.
   unfold not.
   intros.
   apply H.
-  
-  Fail apply restricted_excluded_middle.
-  
-
-
-  
-  (* FILL IN HERE *) Admitted.
+  right.
+  intros.
+  apply H.
+  left.
+  assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (not_exists_dist)

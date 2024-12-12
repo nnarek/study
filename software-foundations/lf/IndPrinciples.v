@@ -71,7 +71,10 @@ Proof.
 Theorem plus_one_r' : forall n:nat,
   n + 1 = S n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  apply nat_ind.
+  - reflexivity.
+  - intros. simpl. rewrite H. reflexivity.
+Qed.
 (** [] *)
 
 (** Coq generates induction principles for every datatype
@@ -190,13 +193,13 @@ Inductive booltree : Type :=
 Definition booltree_property_type : Type := booltree -> Prop.
 
 Definition base_case (P : booltree_property_type) : Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+  := P bt_empty.
 
 Definition leaf_case (P : booltree_property_type) : Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+  := forall b, P (bt_leaf b).
 
 Definition branch_case (P : booltree_property_type) : Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+  := forall b t1 t2, P t1 -> P t2 -> P (bt_branch b t1 t2).
 
 Definition booltree_ind_type :=
   forall (P : booltree_property_type),
@@ -212,7 +215,14 @@ Definition booltree_ind_type :=
     same type as what you just defined. *)
 
 Theorem booltree_ind_type_correct : booltree_ind_type.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. 
+  unfold booltree_ind_type.
+  intros P Hbase Hleaf Hbranch.
+  induction b.
+  - apply Hbase. 
+  - apply Hleaf.
+  - apply Hbranch; try assumption.
+Qed.
 
 (** [] *)
 
@@ -229,7 +239,8 @@ Proof. (* FILL IN HERE *) Admitted.
     principle Coq generates is that given above: *)
 
 Inductive Toy : Type :=
-  (* FILL IN HERE *)
+  | con1 (b : bool)
+  | con2 (n : nat) (t : Toy)
 .
 
 (** Show that your definition is correct by proving the following theorem.
@@ -243,7 +254,9 @@ Theorem Toy_correct : exists f g,
     (forall b : bool, P (f b)) ->
     (forall (n : nat) (t : Toy), P t -> P (g n t)) ->
     forall t : Toy, P t.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. 
+  exists con1. exists con2. apply Toy_ind.
+Qed.
 
 (** [] *)
 
@@ -288,6 +301,18 @@ Inductive tree (X:Type) : Type :=
   | leaf (x : X)
   | node (t1 t2 : tree X).
 Check tree_ind.
+
+Definition my_tree_ind :=
+  forall (X : Type) (P : tree X -> Prop),
+    (forall (x :  X), P (leaf X x)) ->
+    (forall t1 t2, P t1 -> P t2 -> P (node X t1 t2)) ->
+    forall (b : tree X), P b.
+Theorem my_tree_ind_is_correct : my_tree_ind.
+Proof. 
+  unfold my_tree_ind. 
+  intros.
+  apply tree_ind; auto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (mytype)
@@ -303,6 +328,11 @@ Check tree_ind.
                forall n : nat, P (constr3 X m n)) ->
             forall m : mytype X, P m
 *) 
+Inductive mytype (X:Type) : Type :=
+  | constr1 (x : X)
+  | constr2 (n : nat)
+  | constr3 (m : mytype X) (n : nat).
+Check mytype_ind.
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (foo)
@@ -319,7 +349,11 @@ Check tree_ind.
              forall f2 : foo X Y, P f2
 *) 
 (** [] *)
-
+Inductive foo (X Y : Type): Type :=
+  | bar (x : X)
+  | baz (y : Y)
+  | quux (f1 : nat -> foo X Y).
+Check foo_ind.
 (** **** Exercise: 1 star, standard, optional (foo')
 
     Consider the following inductive definition: *)
@@ -339,7 +373,14 @@ Inductive foo' (X:Type) : Type :=
              ___________________________________________ ->
              forall f : foo' X, ________________________
 *)
-
+Definition my_foo'_ind :=
+  forall (X : Type) (P : foo' X -> Prop),
+        (forall (l : list X) (f : foo' X),
+              P f ->
+              P (C1 X l f)) ->
+      P (C2 X) ->
+      forall f : foo' X, P f.
+Check foo'_ind.
 (** [] *)
 
 (* ################################################################# *)
@@ -476,9 +517,37 @@ Proof.
     induction, and state the theorem and proof in terms of this
     defined proposition.  *)
 
-(* FILL IN HERE
+Definition P_add_assoc : nat -> nat -> nat -> Prop
+    := (fun n m p => n + (m + p) = (n + m) + p).
 
-    [] *)
+Theorem add_assoc_explicit_p : forall n m p : nat, P_add_assoc n m p.
+Proof.
+  intros.
+  apply nat_ind; unfold P_add_assoc.
+  - repeat rewrite -> add_0_r. reflexivity.
+  - intros. repeat rewrite <- plus_n_Sm. rewrite H. reflexivity. 
+Qed.
+
+Theorem add_assoc_explicit_n : forall n m p : nat, P_add_assoc n m p.
+Proof.
+  intros.
+  generalize dependent n. 
+  apply nat_ind; unfold P_add_assoc.
+  - reflexivity.
+  - intros. simpl. rewrite H. reflexivity. 
+Qed.
+
+Definition P_add_comm : nat -> nat -> Prop
+    := (fun n m => n + m = m + n).
+
+Theorem add_comm_explicit_m : forall n m : nat,
+      P_add_comm n m.
+Proof.
+  intros n.
+  apply nat_ind; unfold P_add_comm.
+  - rewrite -> add_0_r. reflexivity.
+  - intros. rewrite <- plus_n_Sm. simpl. rewrite H. reflexivity.
+Qed.
 
 (* ################################################################# *)
 (** * Induction Principles for Propositions *)
@@ -942,13 +1011,20 @@ Proof.
     [match] as part of the definition. *)
 
 Definition better_t_tree_ind_type : Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+  := forall (X : Type) (P : t_tree X -> Prop),
+        P t_leaf ->
+        (forall (s1 s2 : t_tree X) (x: X), P s1 -> P s2 -> P (t_branch (s1, x, s2))) ->
+        forall t : t_tree X, P t.
 
 (** Second, define the induction principle by giving a term of that
     type. Use the examples about [nat], above, as models. *)
 
 Definition better_t_tree_ind : better_t_tree_ind_type
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+  := fun X P pl pb =>
+        fix f (t:t_tree X) := match t with
+                            | t_leaf => pl
+                            | t_branch (s1, x, s2) => pb s1 s2 x (f s1) (f s2)
+                            end.
 
 (** Finally, prove the theorem. If [induction...using] gives you an
     error about "Cannot recognize an induction scheme", don't worry
@@ -959,8 +1035,12 @@ Definition better_t_tree_ind : better_t_tree_ind_type
 
 Theorem reflect_involution : forall (X : Type) (t : t_tree X),
     reflect (reflect t) = t.
-Proof. (* FILL IN HERE *) Admitted.
-
+Proof.
+  intros.
+  apply (better_t_tree_ind X (fun t => reflect (reflect t) = t)).
+  - reflexivity.
+  - intros s1 s2 x Hs1 Hs2. simpl. rewrite Hs1. rewrite Hs2. reflexivity.
+Qed.
 (** [] *)
 
 (* 2023-12-29 17:12 *)
