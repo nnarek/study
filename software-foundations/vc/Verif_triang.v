@@ -126,9 +126,17 @@ rewrite <- (Z2Nat.id n) in * by lia.
 set (j := Z.to_nat n) in *. clearbody j.
 Check inj_S.  (* Hint!  this may be useful *)
 Print Z.succ.  (* Hint!  [Z.succ(x)] unfolds to [x+1] *)
-(* FILL IN HERE *) Admitted.
+induction j.
+- simpl. assumption.
+- apply H0. 
+  + lia.
+  + rewrite inj_S. unfold Z.succ. 
+    Search (?b + ?a - ?a).
+    rewrite Z.add_simpl_r.
+    apply IHj.
+    lia.
+Qed.
 (** [] *)
-
 (* ----------------------------------------------------------------- *)
 (** *** A theorem about the nth triangular number *)
 
@@ -155,10 +163,13 @@ Proof.
    defines for the Function.  Try the command [Search decreasing.] to see all
    the reasoning principles that Coq  defined for the new [Function].  We will
    use this one: *)
-Check decreasing_equation.
+Check decreasing_equation. (* add into notes about Function and about this autogen theorem *)
 
     rewrite decreasing_equation.
-
+    destruct (Z_gt_dec i 0); simpl.
+    + lia.
+    + lia.
+  - assumption.
 (** during the proof of this lemma, you may
 find the [ring_simplify] tactic useful.  Read
 about it in the Coq reference manual.  Basically,
@@ -166,7 +177,7 @@ it takes formulas with multiplication and addition,
 and simplifies them.  But you can do this without
 [ring_simplify], using just ordinary rewriting
 with lemmas about Z.add and Z.mul.  *)
-(* FILL IN HERE *) Admitted.
+Qed.
 
 Lemma add_list_decreasing_eq: forall n,
   0 <= n ->
@@ -174,7 +185,9 @@ Lemma add_list_decreasing_eq: forall n,
 Proof.
   intros.
   apply Z.div_unique_exact.
-(* FILL IN HERE *) Admitted.
+  - lia.
+  - rewrite add_list_decreasing_eq_alt; auto.
+Qed.
 (** [] *)
 
 (* ----------------------------------------------------------------- *)
@@ -214,7 +227,13 @@ Lemma listrep_valid_pointer:
   forall il p,
    listrep il p |-- valid_pointer p.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros.
+  induction il; intros; unfold listrep.
+  - entailer!.
+  - fold listrep. entailer!.
+    hint.
+    auto with valid_pointer.
+Qed.
 #[export] Hint Resolve listrep_valid_pointer : valid_pointer.
 
 (** Specification of stack data structure *)
@@ -226,14 +245,19 @@ Definition stack (il: list Z) (p: val) :=
 
 Lemma stack_local_prop: forall il p, stack il p |--  !! (isptr p).
 Proof.
-(* FILL IN HERE *) Admitted.
+  induction il; intros; unfold stack; unfold listrep; Intros q. 
+  - entailer!.
+  - fold listrep. Intros y. entailer!.
+Qed.
 #[export] Hint Resolve stack_local_prop : saturate_local.
 
 Lemma stack_valid_pointer:
   forall il p,
    stack il p |-- valid_pointer p.
 Proof.
-(* FILL IN HERE *) Admitted.
+  induction il; intros; unfold stack; Intros q; entailer!.
+Qed.
+
 #[export] Hint Resolve stack_valid_pointer : valid_pointer.
 
 Definition newstack_spec : ident * funspec :=
@@ -318,19 +342,52 @@ Definition Gprog : funspecs :=
 (** **** Exercise: 3 stars, standard (body_push_increasing) *)
 Lemma body_push_increasing: semax_body Vprog Gprog
                          f_push_increasing push_increasing_spec.
-(* FILL IN HERE *) Admitted.
+  start_function.
+  forward.
+  forward_while (EX i: Z,
+    PROP (0 <= i <= n)
+    LOCAL (temp _i (Vint (Int.repr i)); temp _st st; temp _n (Vint (Int.repr n)); gvars gv) (* TODO without "gvars gv" I get error, learn what is it and what is GLOBALS(gv) mean *)
+    SEP (stack (decreasing i) st; mem_mgr gv)).
+  - Exists 0.
+    entailer!.
+  - entailer!.
+  - forward.
+    forward_call (st, i+1, (decreasing i),gv).
+    + entailer!.
+      Exists (i+1).
+      entailer!.
+      assert (i + 1 :: decreasing i = decreasing (i + 1)) as Hd.
+      * rewrite (decreasing_equation (i+1)).
+        destruct (Z_gt_dec (i + 1) 0).
+        ** repeat f_equal. lia.
+        ** exfalso. lia. 
+      * rewrite Hd. auto.
+  - forward.
+    assert (i = n) by lia.
+    subst.
+    entailer!.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (add_list_lemmas) *)
 Lemma add_list_app:
   forall al bl, add_list (al++bl) = add_list al + add_list bl.
-(* FILL IN HERE *) Admitted.
+Proof.
+  induction al; intros.
+  - simpl. lia.
+  - simpl. rewrite IHal. lia.
+Qed.
 
 Lemma add_list_nonneg:
  forall il,
   Forall (Z.le 0) il ->
   0 <= add_list il.
-(* FILL IN HERE *) Admitted.
+Proof.
+  intros il Hf.
+  induction Hf.
+  - reflexivity.
+  - simpl. lia. 
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (add_list_sublist_bounds) *)
@@ -342,10 +399,26 @@ Lemma add_list_sublist_bounds:
   0 <= add_list il <= K ->
   0 <= add_list (sublist lo hi il) <= K.
 Proof.
+  intros lo hi K il Hlo Hhi Hf Ha.
+  specialize (Forall_sublist _ lo hi _ Hf) as H1.
+  apply add_list_nonneg in H1.
+  split; auto.
+  rewrite <- (sublist_same 0 (Zlength il) il eq_refl eq_refl) in Ha.
+  rewrite (sublist_split _ hi _ _ ) in Ha; try lia.
+  rewrite add_list_app in Ha.
+  rewrite (sublist_split _ lo _ _ ) in Ha; try lia.
+  rewrite add_list_app in Ha.
+  specialize (Forall_sublist _ 0 lo _ Hf) as H2.
+  apply add_list_nonneg in H2.
+  specialize (Forall_sublist _ hi (Zlength il) _ Hf) as H3.
+  apply add_list_nonneg in H3.
+  lia.
+
+
 (** Hint: you don't need induction.  Useful lemmas are, [sublist_same, 
   sublist_split, add_list_nonneg, add_list_app, Forall_sublist],  and use
   the [hint] tactic to learn when the [list_solve] tactic will be useful. *)
-(* FILL IN HERE *) Admitted.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (add_another)
@@ -373,20 +446,21 @@ Lemma add_another:
 Proof.
 intros.
 assert (0 <= add_list il). {
-  (* FILL IN HERE *) admit. 
+  apply (add_list_nonneg _ H).
 }
  assert (0 <= add_list (sublist 0 i il) <= Int.max_signed). {
-  (* FILL IN HERE *) admit. 
+  apply add_list_sublist_bounds; auto; lia.
  }
  assert (H4: 0 <= add_list (sublist 0 (i+1) il) <= Int.max_signed). {
-  (* FILL IN HERE *) admit. 
+  apply add_list_sublist_bounds; auto; lia.
  }
  assert (0 <= Znth i il <= Int.max_signed). {
   replace (Znth i il) with (add_list (sublist i (i+1) il)).
-  -
-   (* FILL IN HERE *) admit. 
-  -
-   (* FILL IN HERE *) admit. 
+  - apply add_list_sublist_bounds; auto; lia.
+  - Search (sublist ?i (?i + 1)).
+    rewrite sublist_len_1; auto.
+    simpl.
+    lia. 
 }
 
 (**   Next: [Int.signed (Int.repr (add_list (sublist 0 i il))) 
@@ -405,7 +479,7 @@ rewrite add_list_app in H4.
 rewrite sublist_len_1 in H4 by list_solve.
 simpl in H4.
 rep_lia.
-(* FILL IN HERE *) Admitted.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (body_pop_and_add) *)
@@ -422,11 +496,14 @@ forward_while (EX i:Z,
          gvars gv)
    SEP (stack (sublist i (Zlength il) il) st; mem_mgr gv)).
 + (* Prove that the precondition implies the loop invariant *)
-(* FILL IN HERE *) admit.
+  Exists 0.
+  entailer!.
+  rewrite sublist_same; auto.
 + (* "type-check the expression": prove the loop test evaluates *)
 entailer!.
 + (* Prove the loop body preserves the loop invariant *)
 forward_call (st, Znth i il, sublist (i+1) (Zlength il) il, gv).
+ (* TODO what is Frame??? *)
  (** This [forward_call] couldn't quite figure out the "Frame" for the 
    function call. That is, it couldn't match up  
    [stack (sublist i (Zlength il) il) st] with 
@@ -444,7 +521,10 @@ forward_call (st, Znth i il, sublist (i+1) (Zlength il) il, gv).
    |-- stack (Znth i il :: sublist (i + 1) (Zlength il) il) st * fold_right_sepcon Frame
 
    then just do [cancel].  *)
-(* FILL IN HERE *) admit.
+  rewrite (sublist_split _ (i+1)); try lia.
+  rewrite sublist_len_1; try lia.
+  simpl.
+  entailer!. 
 (** And now we are ready to go forward through the C statement [ _s = _s + _t; ] *)
 Fail forward.
 (** oops!  we can't go [forward] through [ _s = _s + _t; ] 
@@ -459,9 +539,52 @@ Abort.
    but adjust the loop invariant: add a LOCAL assertion for [_s]. *)
 Lemma body_pop_and_add: semax_body Vprog Gprog f_pop_and_add pop_and_add_spec.
 Proof.
+start_function.
+forward.
+forward.
+forward_while (EX i:Z,
+   PROP(0 <= i <= Zlength il) 
+   LOCAL (temp _st st; 
+          temp _i (Vint (Int.repr i)); 
+          temp _n (Vint (Int.repr (Zlength il)));
+          temp _s (Vint (Int.repr (add_list (sublist 0 i il))));
+         gvars gv)
+   SEP (stack (sublist i (Zlength il) il) st; mem_mgr gv)).
++ Exists 0.
+  entailer!.
+  rewrite sublist_same; auto.
++ entailer!.
++ forward_call (st, Znth i il, sublist (i+1) (Zlength il) il, gv).
+  rewrite (sublist_split _ (i+1)); try lia.
+  rewrite sublist_len_1; try lia.
+  simpl.
+  entailer!. 
+(** And now we are ready to go forward through the C statement [ _s = _s + _t; ] *)
+  forward.
+    entailer!. 
+    apply add_another; auto; lia.
+
+  forward.
+  Exists (i+1).
+  entailer!. 
+    repeat f_equal.
+    rewrite (sublist_split _ i); try lia.
+    rewrite sublist_len_1; try lia.
+    rewrite add_list_app.
+    simpl.
+    lia.
++ forward.
+  assert (i = Zlength il) by lia.
+  subst.
+  entailer!. 
+  - rewrite sublist_same; auto.
+  - Search (sublist ?i ?i ?a).
+    rewrite sublist_nil.
+    entailer!. 
+
 (** Hint: choose the loop invariant for [temp _s ???] in such a way
     that you can make use of Lemma add_another. *)
-(* FILL IN HERE *) Admitted.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (body_main) *)
@@ -475,11 +598,20 @@ start_function.
     importing [floyd.library] we would actually link with a malloc/free
     implementation, but that's beyond the scope of this chapter. *)
 sep_apply (create_mem_mgr gv).
+
+
 (** You can see that this has produced the SEP conjunct [mem_mgr gv],
     which is useful to satisfy the precondition of [newstack],
     [push], [pop], etc. Now you can finish this proof.  *)
+forward_call.
+Intros vret.
+forward_call.
+forward_call.
+- entailer!. 
+- repeat constructor; try computable; compute; intros H; inversion H.
+- forward.
 
-(* FILL IN HERE *) Admitted.
+Qed.
 (** [] *)
 
 (* 2023-03-25 11:30 *)

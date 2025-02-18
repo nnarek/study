@@ -89,7 +89,7 @@ Fixpoint listrep (sigma: list val) (p: val) : mpred :=
  differently, in which case, leave out the [Arguments] command. *)
 
 Arguments listrep sigma p : simpl never.
-
+(* TODO add in th notes why we need to prove all of this, try to not add them into db and see what will happen *)
 (* ================================================================= *)
 (** ** Hint databases for spatial operators *)
 

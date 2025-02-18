@@ -168,7 +168,16 @@ Lemma listrep_local_prop: forall il p, listrep il p |--
         !! (is_pointer_or_null p  /\ (p=nullval <-> il=nil)).
 (** See if you can remember how to prove this; or look again
   at [Verif_reverse] to see how it's done. *)
-(* FILL IN HERE *) Admitted.
+  induction il; intros.
+  - unfold listrep. entailer!. split; intros; reflexivity.
+  - unfold listrep. fold listrep. (* add into doc that this equivalent to simpl. if it is disabled for this function *)
+    Intros y. (* entailer. also do Intros of EX, what is difference??  and also why we able to do intro of existential quantifier??? *)
+    entailer!. (* add into docs that this combination similar to intro of entailment *)
+    split; intros.
+    + subst. inversion H.
+    + inversion H3. 
+Qed.
+
 #[export] Hint Resolve listrep_local_prop : saturate_local.
 
 Lemma listrep_valid_pointer:
@@ -176,7 +185,12 @@ Lemma listrep_valid_pointer:
    listrep il p |-- valid_pointer p.
 (** See if you can remember how to prove this; or look again
   at [Verif_reverse] to see how it's done. *)
-(* FILL IN HERE *) Admitted.
+  induction il; intros.
+  + unfold listrep. entailer!. 
+  + unfold listrep. fold listrep.
+    Intros y.
+    entailer!.
+Qed.
 #[export] Hint Resolve listrep_valid_pointer : valid_pointer.
 (** [] *)
 
@@ -205,13 +219,21 @@ Arguments stack il p : simpl never.
 (** **** Exercise: 1 star, standard (stack_properties) *)
 
 Lemma stack_local_prop: forall il p, stack il p |--  !! (isptr p).
-(* FILL IN HERE *) Admitted.
+  intros.
+  unfold stack.
+  Intros q.
+  entailer!.
+Qed.
 #[export] Hint Resolve stack_local_prop : saturate_local.
 
 Lemma stack_valid_pointer:
   forall il p,
    stack il p |-- valid_pointer p.
-(* FILL IN HERE *) Admitted.
+  intros.
+  unfold stack.
+  Intros y.
+  entailer!.
+Qed.
 #[export] Hint Resolve stack_valid_pointer : valid_pointer.
 (** [] *)
 
@@ -284,8 +306,22 @@ Definition Gprog : funspecs :=
 (** **** Exercise: 2 stars, standard (body_pop) *)
 Lemma body_pop: semax_body Vprog Gprog f_pop pop_spec.
 Proof.
-start_function.
-(* FILL IN HERE *) Admitted.
+  start_function.
+  unfold stack in *.
+  Intros y. (* why Intros do intro of y of SEP assertion?? *)
+  forward.
+  forward.
+  fold listrep.
+  forward.
+  forward.
+  hint.
+  forward_call ((Tstruct _cons noattr),y,gv).
+  - destruct (eq_dec y nullval); entailer!.
+  - forward.
+    Exists y0.
+    entailer!.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (body_push) *)
@@ -293,14 +329,65 @@ Lemma body_push: semax_body Vprog Gprog f_push push_spec.
 Proof.
 start_function.
 forward_call (Tstruct _cons noattr, gv).
-(* FILL IN HERE *) Admitted.
+unfold stack in *.
+Intros vret.
+destruct (eq_dec vret nullval).
+- subst.
+  forward_if False.
+  + forward_call.
+    contradiction.
+  + forward.
+    entailer!.
+- forward_if True.
+  + contradiction.
+  + forward.
+    entailer!.
+  + Fail forward.
+    hint.
+    Intros. (* TODO why PROP should be empty?? *)
+    forward.
+    Intros q.
+    forward.
+    forward.
+    forward.
+    entailer!.
+    Exists vret.
+    entailer!.
+    unfold listrep in *.
+    fold listrep in *.
+    Exists q.
+    entailer!.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (body_newstack) *)
 Lemma body_newstack: semax_body Vprog Gprog f_newstack newstack_spec.
 Proof.
 start_function.
-(* FILL IN HERE *) Admitted.
+hint.
+forward_call ((Tstruct _stack noattr), gv).
+Intros vret.
+destruct (eq_dec vret nullval); subst.
+- forward_if False.
+  + forward_call.
+    contradiction.
+  + forward.
+    contradiction.
+- forward_if True.
+  + contradiction.
+  + forward.
+    entailer!.
+  + Intros.
+    forward.
+    forward.
+    unfold stack in *.
+    Exists vret.
+    entailer!.
+    unfold listrep in *.
+    fold listrep in *.
+    Exists nullval.
+    entailer!.
+Qed.
 (** [] *)
 
 (* 2023-03-25 11:30 *)

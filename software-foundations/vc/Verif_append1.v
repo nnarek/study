@@ -112,7 +112,12 @@ Arguments lseg contents x z : simpl never.
 Lemma singleton_lseg: forall (a: val) (x y: val),
   data_at Tsh t_list (a, y) x |-- lseg [a] x y.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros.
+  unfold lseg.
+  entailer!.
+  Exists y.
+  entailer!.
+Qed.
 (** [] *)
 
 (** It is critical to observe that a partial linked list defined by
@@ -156,7 +161,7 @@ Proof.
   unfold listrep.
   Intros u.
   subst.
-Check (data_at_conflict Tsh t_list (c, nullval)). 
+Check (data_at_conflict Tsh t_list (c, nullval)). (* TODO I expect thst there should be condition that v<>v' *)
   sep_apply (data_at_conflict Tsh t_list (c, nullval)). 
   + auto.
   + entailer!.
@@ -172,14 +177,20 @@ Qed.
 Lemma lseg_lseg: forall (s1 s2: list val) (x y z: val),
   lseg s1 x y * lseg s2 y z |-- lseg (s1 ++ s2) x z.
 Proof.
-(* FILL IN HERE *) Admitted.
+  induction s1; intros; simpl; unfold lseg; fold lseg.
+  - entailer!.
+  - entailer!. Exists x0. entailer!. auto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (lseg_list) *)
 Lemma lseg_list: forall (s1 s2: list val) (x y: val),
   lseg s1 x y * listrep s2 y |-- listrep (s1 ++ s2) x.
 Proof.
-(* FILL IN HERE *) Admitted.
+  induction s1; intros; simpl; unfold lseg; fold lseg.
+  - entailer!.
+  - entailer!. unfold listrep; fold listrep. Exists x0. entailer!. auto. 
+Qed.
 (** [] *)
 
 (** Is it possible to define [lseg] in a different way so that loopy 
@@ -199,6 +210,7 @@ Lemma listrep_local_facts:
    listrep sigma p |--
    !! (is_pointer_or_null p /\ (p=nullval <-> sigma=nil)).
 Proof.
+
 (* FILL IN HERE *) Admitted.
 #[export] Hint Resolve listrep_local_facts : saturate_local.
 
@@ -251,7 +263,10 @@ forward_if. (* if (x == NULL) *)
    words, [s1] should be [nil]. We can easily derive this by [listrep_null].
    The rest of the proof in this branch is left as an exercise. *)
   rewrite (listrep_null _ x) by auto.
-  (* FILL IN HERE *) admit.
+  forward.
+  Exists y.
+  simpl.
+  entailer!.
 - (* If-else *)
   (** This time, we know that [x] is not null; thus [s1] should
     be nonempty. *)
@@ -319,8 +334,8 @@ forward_if. (* if (x == NULL) *)
  are left. Their proofs are left for the reader, using [app_assoc], 
  [singleton_lseg] and [lseg_lseg]. *)
     entailer!.
-    * (* FILL IN HERE *) admit.
-    * (* FILL IN HERE *) admit.
+    * list_solve.
+    * sep_apply singleton_lseg.  Search (sepcon ?a ?b = sepcon ?b ?a). rewrite sepcon_comm. sep_apply lseg_lseg. entailer!.
  + (* after the loop *)
    (** After exiting the loop, the loop condition must be false, i.e.
     [u] is the null pointer. Thus [s1c = nil] and [s1 = s1a ++ [b]]. *)    
@@ -328,11 +343,18 @@ forward_if. (* if (x == NULL) *)
   rewrite (listrep_null s1c) by auto.
   Intros.
   subst s1c.
-
   (** The rest of the proof is standard. Hint, [singleton_lseg],
     [lseg_lseg] and/or [lseg_list] may be useful. *)
-  (* FILL IN HERE *) admit.
-(* FILL IN HERE *) Admitted.
+  forward.
+  forward.
+  Exists x.
+  entailer!.
+  sep_apply singleton_lseg.
+  sep_apply lseg_list.
+  sep_apply lseg_list.
+  rewrite app_assoc.
+  entailer!.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -347,14 +369,34 @@ forward_if. (* if (x == NULL) *)
 Lemma lseg2listrep: forall s x,
   lseg s x nullval |-- listrep s x.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros.
+  assert (lseg s x nullval * listrep [] nullval |-- listrep s x).
+    { sep_apply lseg_list. list_solve. }
+  unfold listrep in *. fold listrep in *. sep_apply H; auto.
+Qed.
+
+Corollary lseg2listrep': forall s x,
+lseg s x nullval |-- listrep s x.
+Proof.
+  induction s; intros; unfold listrep; fold listrep; unfold lseg; fold lseg.
+  - entailer!.
+  - entailer!. Exists y. entailer!.
+Qed.
+
 (** [] *)
 
 (** **** Exercise: 1 star, standard: (listrep2lseg) *)
 Lemma listrep2lseg: forall s x,
   listrep s x |-- lseg s x nullval.
 Proof.
-(* FILL IN HERE *) Admitted.
+  induction s; 
+  intros; 
+  unfold listrep; fold listrep; 
+  unfold lseg; fold lseg;
+  entailer!;
+  Exists y; 
+  entailer!. 
+Qed.
 (** [] *)
 
 Corollary lseg_listrep_equiv: forall s x,
@@ -370,6 +412,10 @@ Qed.
 Lemma lseg_lseg_inv: forall s1 s2 x z,
   lseg (s1 ++ s2) x z |-- EX y: val, lseg s1 x y * lseg s2 y z.
 Proof.
+  induction s1; intros; simpl; unfold lseg; fold lseg.
+  - Exists x. entailer!.
+  - Intros y. 
+
 (* FILL IN HERE *) Admitted.
 (** [] *)
 
@@ -380,6 +426,11 @@ Lemma loopy_lseg_no_connection: forall s1 s2 x y z,
   x = y ->
   lseg s1 x y * lseg s2 y z |-- FF.
 Proof.
+  induction s1; intros; simpl; unfold lseg; fold lseg.
+  - contradiction.
+  - Intros y0. subst.
+
+
 (* FILL IN HERE *) Admitted.
 (** [] *)
 
