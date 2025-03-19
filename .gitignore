@@ -7,4 +7,6 @@
 !plfa/*
 !lean4game
 !lean4game/*
+!tla_pluscal_tutorial
+!tla_pluscal_tutorial/**
 !.gitignore
