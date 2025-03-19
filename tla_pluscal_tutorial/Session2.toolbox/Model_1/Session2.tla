@@ -7,30 +7,34 @@ EXTENDS Integers, TLC
 (********
 
 --algorithm AnyName1 {
-   variable x = {"a","b"} ;    
-   {
-     x := x \ {"a"} ;
-     print x
-   }
+    variable x = <<1, 2, 3>> , y = x ;    
+    {  
+      x[3] := x[2] + 4 ;
+      print x  ;
+      print y
+    }
 }
 
 
 ********)
 
 
-\* BEGIN TRANSLATION (chksum(pcal) = "e925d8dd" /\ chksum(tla) = "e73ae575")
-VARIABLES pc, x
+\* BEGIN TRANSLATION (chksum(pcal) = "c93cd468" /\ chksum(tla) = "43e17a25")
+VARIABLES pc, x, y
 
-vars == << pc, x >>
+vars == << pc, x, y >>
 
 Init == (* Global variables *)
-        /\ x = {"a","b"}
+        /\ x = <<1, 2, 3>>
+        /\ y = x
         /\ pc = "Lbl_1"
 
 Lbl_1 == /\ pc = "Lbl_1"
-         /\ x' = x \ {"a"}
+         /\ x' = [x EXCEPT ![3] = x[2] + 4]
          /\ PrintT(x')
+         /\ PrintT(y)
          /\ pc' = "Done"
+         /\ y' = y
 
 (* Allow infinite stuttering to prevent deadlock on termination. *)
 Terminating == pc = "Done" /\ UNCHANGED vars
@@ -51,6 +55,6 @@ Text that follows the module is ignored.  The Toolbox maintains the following
 information.
 
 \* Modification History
-\* Last modified Wed Mar 19 22:04:40 GET 2025 by developer
+\* Last modified Wed Mar 19 22:04:21 GET 2025 by developer
 \* Last modified Tue Dec 22 16:15:06 PST 2020 by lamport
 \* Created Sat Dec 05 17:41:14 PST 2020 by lamport

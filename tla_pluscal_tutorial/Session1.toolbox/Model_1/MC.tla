@@ -1,6 +1,15 @@
 ---- MODULE MC ----
 EXTENDS Session1, TLC
 
+\* Constant expression definition @modelExpressionEval
+const_expr_174240608369723000 == 
+IsPrime(79)
+----
+
+\* Constant expression ASSUME statement @modelExpressionEval
+ASSUME PrintT(<<"$!@$!@$!@$!@$!",const_expr_174240608369723000>>)
+----
+
 =============================================================================
 \* Modification History
-\* Created Thu Dec 17 15:34:55 PST 2020 by lamport
+\* Created Wed Mar 19 21:41:23 GET 2025 by developer
