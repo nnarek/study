@@ -9,4 +9,6 @@
 !lean4game/*
 !tla_pluscal_tutorial
 !tla_pluscal_tutorial/**
+!isabelle-prog-prove
+!isabelle-prog-prove/*.thy
 !.gitignore
