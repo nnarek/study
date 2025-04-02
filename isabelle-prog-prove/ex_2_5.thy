@@ -10,4 +10,5 @@ theorem sum_formula: "sum_upto n = (n*(Suc n)) div 2"
   apply(induction n)
   apply(auto)
   done
-                                                   
+
+end

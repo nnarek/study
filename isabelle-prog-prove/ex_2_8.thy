@@ -10,3 +10,5 @@ theorem map_intersperse: "map f (intersperse a xs) = intersperse (f a) (map f xs
   apply(induction xs)
   apply(auto)
   done                              
+
+end

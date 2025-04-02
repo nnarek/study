@@ -17,3 +17,5 @@ theorem node_count: "nodes (explode n t) = (2^n)*(nodes t)"
   apply(induction n arbitrary: t)
   apply(simp)
   done
+
+end

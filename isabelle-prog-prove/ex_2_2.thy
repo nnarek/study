@@ -26,3 +26,5 @@ theorem add_comm: "add a b = add b a"
   apply(auto)
   done
 
+end
+

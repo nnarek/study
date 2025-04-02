@@ -10,3 +10,5 @@ theorem count_less: "count x xs \<le> length xs"
   apply(induction xs)
   apply(auto)
   done
+
+end

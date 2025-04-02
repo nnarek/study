@@ -19,3 +19,5 @@ theorem rev_rev: "reverse (reverse xs) = xs"
   apply(induction xs)
   apply(auto)
   done
+
+end

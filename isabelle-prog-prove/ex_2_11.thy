@@ -62,3 +62,5 @@ theorem eval_preserve: "evalp (coeffs e) x = eval e x"
   apply(induction e arbitrary: x)
   apply(auto)
   done
+
+end

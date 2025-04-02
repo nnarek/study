@@ -16,4 +16,5 @@ theorem sum_eq: "sum_tree t = sum_list (contents t)"
   apply(induction t)
   apply(auto)
   done
-                                                   
+
+end

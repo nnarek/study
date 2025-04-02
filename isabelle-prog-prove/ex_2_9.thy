@@ -19,3 +19,5 @@ theorem itadd_add : "itadd x y = add x y"
   apply(induction x arbitrary: y)
   apply(auto)
   done                              
+
+end

@@ -20,4 +20,5 @@ theorem pre_post_order: "pre_order (mirror t) = rev (post_order t)"
   apply(induction t)
   apply(auto)
   done
-                                                   
+
+end
