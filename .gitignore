@@ -11,4 +11,6 @@
 !tla_pluscal_tutorial/**
 !isabelle-prog-prove
 !isabelle-prog-prove/*.thy
+!dli-fundamentals-of-accelerated-computing-with-cuda-c-cpp
+!dli-fundamentals-of-accelerated-computing-with-cuda-c-cpp/**
 !.gitignore
