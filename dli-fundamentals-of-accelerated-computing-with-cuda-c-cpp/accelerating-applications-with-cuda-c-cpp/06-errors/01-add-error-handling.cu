@@ -39,12 +39,18 @@ int main()
    * exist, and then correct them. Googling error messages may be
    * of service if actions for resolving them are not clear to you.
    */
+  cudaError_t err;
 
   int N = 10000;
   int *a;
 
   size_t size = N * sizeof(int);
   cudaMallocManaged(&a, size);
+  err = cudaGetLastError();
+  if (err != cudaSuccess)
+  {
+    printf("Error at cudaMallocManaged: %s\n", cudaGetErrorString(err));
+  }
 
   init(a, N);
 
@@ -52,10 +58,26 @@ int main()
   size_t number_of_blocks = 32;
 
   doubleElements<<<number_of_blocks, threads_per_block>>>(a, N);
+  err = cudaGetLastError();
+  if (err != cudaSuccess)
+  {
+    printf("Error at doubleElements kernel launch: %s\n", cudaGetErrorString(err));
+  }
+
   cudaDeviceSynchronize();
+  err = cudaGetLastError();
+  if (err != cudaSuccess)
+  {
+    printf("Error at cudaDeviceSynchronize: %s\n", cudaGetErrorString(err));
+  }
 
   bool areDoubled = checkElementsAreDoubled(a, N);
   printf("All elements were doubled? %s\n", areDoubled ? "TRUE" : "FALSE");
 
   cudaFree(a);
+  err = cudaGetLastError();
+  if (err != cudaSuccess)
+  {
+    printf("Error at cudaFree: %s\n", cudaGetErrorString(err));
+  }
 }

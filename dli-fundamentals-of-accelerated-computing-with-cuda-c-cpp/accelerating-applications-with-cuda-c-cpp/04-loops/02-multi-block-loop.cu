@@ -5,12 +5,11 @@
  * only do the work of 1 iteration of the original loop.
  */
 
-void loop(int N)
+__global__ void loop(int N)
 {
-  for (int i = 0; i < N; ++i)
-  {
+  int i = threadIdx.x+blockIdx.x*blockDim.x;
+  if(i < N)
     printf("This is iteration number %d\n", i);
-  }
 }
 
 int main()
@@ -25,5 +24,6 @@ int main()
    */
 
   int N = 10;
-  loop(N);
+  loop<<<2,N/2>>>(N);
+  cudaDeviceSynchronize();
 }

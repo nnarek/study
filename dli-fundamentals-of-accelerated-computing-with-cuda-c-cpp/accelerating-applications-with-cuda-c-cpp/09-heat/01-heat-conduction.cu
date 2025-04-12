@@ -8,16 +8,19 @@
  * `step_kernel_mod` is currently a direct copy of the CPU reference solution
  * `step_kernel_ref` below. Accelerate it to run as a CUDA kernel.
  */
-
+__global__
 void step_kernel_mod(int ni, int nj, float fact, float* temp_in, float* temp_out)
 {
   int i00, im10, ip10, i0m1, i0p1;
   float d2tdx2, d2tdy2;
 
-
+  int i = blockIdx.x * blockDim.x + threadIdx.x;
+  int j = blockIdx.y * blockDim.y + threadIdx.y;
   // loop over all points in domain (except boundary)
-  for ( int j=1; j < nj-1; j++ ) {
-    for ( int i=1; i < ni-1; i++ ) {
+  if (0<j && j < (nj-1)) {
+    if (0 < i && i < (ni-1)) {
+
+     
       // find indices into linear memory
       // for central point and neighbours
       i00 = I2D(ni, i, j);
@@ -79,8 +82,8 @@ int main()
 
   temp1_ref = (float*)malloc(size);
   temp2_ref = (float*)malloc(size);
-  temp1 = (float*)malloc(size);
-  temp2 = (float*)malloc(size);
+  cudaMallocManaged(&temp1,size);
+  cudaMallocManaged(&temp2,size);
 
   // Initialize with random data
   for( int i = 0; i < ni*nj; ++i) {
@@ -97,15 +100,19 @@ int main()
     temp2_ref= temp_tmp;
   }
 
+  dim3 block_dim(32,32);
+  dim3 grid_dim((ni+block_dim.x-1)/block_dim.x,(nj+block_dim.y-1)/block_dim.y);
+
   // Execute the modified version using same data
   for (istep=0; istep < nstep; istep++) {
-    step_kernel_mod(ni, nj, tfac, temp1, temp2);
+    step_kernel_mod<<<grid_dim,block_dim>>>(ni, nj, tfac, temp1, temp2);
 
     // swap the temperature pointers
     temp_tmp = temp1;
     temp1 = temp2;
     temp2= temp_tmp;
   }
+  cudaDeviceSynchronize();
 
   float maxError = 0;
   // Output should always be stored in the temp1 and temp1_ref at this point
@@ -121,8 +128,8 @@ int main()
 
   free( temp1_ref );
   free( temp2_ref );
-  free( temp1 );
-  free( temp2 );
+  cudaFree( temp1 );
+  cudaFree( temp2 );
 
   return 0;
 }

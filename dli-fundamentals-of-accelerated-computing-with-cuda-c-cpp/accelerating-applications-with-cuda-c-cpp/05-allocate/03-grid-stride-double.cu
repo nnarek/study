@@ -20,9 +20,9 @@ void doubleElements(int *a, int N)
 {
   int i;
   i = blockIdx.x * blockDim.x + threadIdx.x;
-  if (i < N)
+  for(int x = 0; i+x < N; x += gridDim.x*blockDim.x)
   {
-    a[i] *= 2;
+    a[i+x] *= 2;
   }
 }
 

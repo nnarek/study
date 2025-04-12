@@ -7,6 +7,19 @@ __global__ void matrixMulGPU( int * a, int * b, int * c )
   /*
    * Build out this kernel.
    */
+  // each thread will calculate c_idx_idy  
+  int ix = blockIdx.x * blockDim.x + threadIdx.x;
+  int iy = blockIdx.y * blockDim.y + threadIdx.y;
+  if (ix >= N || iy >= N)
+  {
+    return;
+  }
+  int dot_vec = 0;
+  for(int i = 0; i < N; ++i)
+  {
+    dot_vec += a[ix*N+i]*b[i*N+iy];
+  }
+  c[ix*N+iy] = dot_vec;
 }
 
 /*
@@ -55,8 +68,8 @@ int main()
    * that can be used in matrixMulGPU above.
    */
 
-  dim3 threads_per_block;
-  dim3 number_of_blocks;
+  dim3 threads_per_block(32,32);
+  dim3 number_of_blocks((N+31)/32,(N+31)/32);
 
   matrixMulGPU <<< number_of_blocks, threads_per_block >>> ( a, b, c_gpu );
 

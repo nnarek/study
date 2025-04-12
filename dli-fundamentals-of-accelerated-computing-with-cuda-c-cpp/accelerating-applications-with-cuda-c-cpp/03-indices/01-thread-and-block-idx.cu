@@ -7,7 +7,7 @@ __global__ void printSuccessForCorrectExecutionConfiguration()
   {
     printf("Success!\n");
   } else {
-    printf("Failure. Update the execution configuration as necessary.\n");
+    //printf("Failure. Update the execution configuration as necessary.\n");
   }
 }
 
@@ -18,5 +18,6 @@ int main()
    * will print `"Success!"`.
    */
 
-  printSuccessForCorrectExecutionConfiguration<<<1, 1>>>();
+  printSuccessForCorrectExecutionConfiguration<<<256, 1024>>>();
+  cudaDeviceSynchronize();
 }
