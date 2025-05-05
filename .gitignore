@@ -13,6 +13,13 @@
 !dli-fundamentals-of-accelerated-computing-with-cuda-c-cpp
 !dli-fundamentals-of-accelerated-computing-with-cuda-c-cpp/**
 
+#unignore only quantum-katas, nested dirs still ignored 
+!quantum-katas
+#unignores every dir inside quantum-katas, note that "!quantum-katas/*" will not work because it will unignore all files inside quantum-katas and nested dirs still will be ignored
+!quantum-katas/*/
+#unignore all .qs files inside nested dirs
+!quantum-katas/*/*.qs
+!quantum-katas/create_files.py
 
 !.gitignore
 
