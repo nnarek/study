@@ -2,14 +2,29 @@
 
 !software-foundations
 !software-foundations/*
+
 !dafny-tutorial
 !dafny-tutorial/*
+
 !lean4game
 !lean4game/*
-!tla_pluscal_tutorial
-!tla_pluscal_tutorial/**
+
+!tla_pluscal_tutorial/
+!tla_pluscal_tutorial/*.tla
+!tla_pluscal_tutorial/*.toolbox
+!tla_pluscal_tutorial/*.toolbox/.settings/
+!tla_pluscal_tutorial/*.toolbox/.settings/*.prefs
+!tla_pluscal_tutorial/*.toolbox/Model_*/
+!tla_pluscal_tutorial/*.toolbox/Model_*/*.out
+!tla_pluscal_tutorial/*.toolbox/Model_*/*.tla
+!tla_pluscal_tutorial/*.toolbox/Model_*/*.cfg
+!tla_pluscal_tutorial/*.toolbox/.project
+!tla_pluscal_tutorial/*.toolbox/*.pmap
+!tla_pluscal_tutorial/*.toolbox/*.launch
+
 !isabelle-prog-prove
 !isabelle-prog-prove/*.thy
+
 !dli-fundamentals-of-accelerated-computing-with-cuda-c-cpp
 !dli-fundamentals-of-accelerated-computing-with-cuda-c-cpp/**
 

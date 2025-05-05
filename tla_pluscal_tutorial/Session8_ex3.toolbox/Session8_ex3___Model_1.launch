@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.lamport.tla.toolbox.tool.tlc.modelCheck">
+    <stringAttribute key="configurationName" value="Model_1"/>
+    <intAttribute key="distributedFPSetCount" value="0"/>
+    <stringAttribute key="distributedNetworkInterface" value="192.168.0.176"/>
+    <intAttribute key="distributedNodesCount" value="1"/>
+    <stringAttribute key="distributedTLC" value="off"/>
+    <intAttribute key="fpIndex" value="73"/>
+    <intAttribute key="maxHeapSize" value="25"/>
+    <stringAttribute key="modelBehaviorInit" value=""/>
+    <stringAttribute key="modelBehaviorNext" value=""/>
+    <stringAttribute key="modelBehaviorSpec" value="Spec"/>
+    <intAttribute key="modelBehaviorSpecType" value="1"/>
+    <stringAttribute key="modelBehaviorVars" value="flag, pc"/>
+    <stringAttribute key="modelComments" value=""/>
+    <booleanAttribute key="modelCorrectnessCheckDeadlock" value="false"/>
+    <listAttribute key="modelCorrectnessInvariants">
+        <listEntry value="1~ (\E id1,id2 \in Procs : id1/=id2 /\ pc[id1]=&quot;cs&quot; /\ pc[id2]=&quot;cs&quot;)"/>
+        <listEntry value="1/\ (\E id1 \in Procs : pc[id1]=&quot;cs&quot; =&gt; (\A id2 \in Procs : (id1/=id2) =&gt; (~(~ flag[1 - id2])))) (*if there exists processes in cs then await conditions of others are false*)&#13;&#10;/\ (\E id1 \in Procs : pc[id1]=&quot;cs&quot; =&gt; (\A id2 \in Procs: (id1/=id2) =&gt; ((~ flag[1 - id2]) &lt;=&gt; (pc[id2]=&quot;cs&quot;)))) (*if there  processes in cs then other process is in cs if only if its await condition is true*)"/>
+    </listAttribute>
+    <listAttribute key="modelCorrectnessProperties"/>
+    <intAttribute key="modelEditorOpenTabs" value="8"/>
+    <stringAttribute key="modelExpressionEval" value=""/>
+    <listAttribute key="modelParameterConstants">
+        <listEntry value="Procs;;{0,1};0;0"/>
+        <listEntry value="N;;2;0;0"/>
+    </listAttribute>
+    <intAttribute key="modelVersion" value="20191005"/>
+    <intAttribute key="numberOfWorkers" value="6"/>
+    <stringAttribute key="result.mail.address" value=""/>
+    <stringAttribute key="specName" value="Session8_ex3"/>
+    <stringAttribute key="tlcResourcesProfile" value="local custom"/>
+</launchConfiguration>
