@@ -36,6 +36,12 @@
 !quantum-katas/*/*.qs
 !quantum-katas/create_files.py
 
+
+!experiments/
+!experiments/coq/
+!experiments/coq/*.v
+
+
 !.gitignore
 
 
