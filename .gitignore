@@ -41,6 +41,12 @@
 !experiments/coq/
 !experiments/coq/*.v
 
+!experiments/z3/
+!experiments/z3/*.py
+!experiments/z3/*.ipynb
+!experiments/z3/ted
+!experiments/z3/ted/*.py
+!experiments/z3/ted/*.ipynb
 
 !.gitignore
 
