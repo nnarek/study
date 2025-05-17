@@ -48,6 +48,9 @@
 !experiments/z3/ted/*.py
 !experiments/z3/ted/*.ipynb
 
+!experiments/sygus/
+!experiments/sygus/*.sl
+
 !.gitignore
 
 
