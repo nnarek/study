@@ -36,6 +36,9 @@
 !quantum-katas/*/*.qs
 !quantum-katas/create_files.py
 
+!leetgpu
+!leetgpu/*.cu
+!leetgpu/download.ipynb
 
 !experiments/
 !experiments/coq/
