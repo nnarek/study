@@ -1,4 +1,5 @@
-// Gpu: NVIDIA TESLA T4
+// URL: https://leetgpu.com/challenges/reverse-array
+// GPU: NVIDIA TESLA T4
 // Runtime: 0.82601 ms
 #include "solve.h"
 #include <cuda_runtime.h>
