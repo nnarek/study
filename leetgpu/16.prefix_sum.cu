@@ -1,6 +1,6 @@
 // URL: https://leetgpu.com/challenges/prefix-sum
 // GPU: NVIDIA TESLA T4
-// Runtime: 0.13922 ms
+// Runtime: 0.13132 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 
@@ -59,11 +59,16 @@ __global__ void prefix_sum(const float* input, float* output, int N) {
 }
 
 __global__ void merge_prefix_sums_of_blocks(const float* input, float* output, int N, int groupDim) {
-    int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    int tid = idx/groupDim;
-    int out_index = groupDim*(tid+1) + idx;
+    __shared__ float last_sum;
+    const int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    const int tid = idx/groupDim;
+    const int out_index = groupDim*(tid+1) + idx;
+    if(threadIdx.x == 0) {
+        last_sum = output[groupDim*(2*tid+1)-1];//reading from output(stored in global memory) only one time 
+    }
+    __syncthreads();
     if(out_index < N) {
-        output[out_index] += output[groupDim*(2*tid+1)-1];
+        output[out_index] += last_sum;
     }
 }
 
