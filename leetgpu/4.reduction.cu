@@ -1,6 +1,6 @@
 // URL: https://leetgpu.com/challenges/reduction
 // GPU: NVIDIA TESLA T4
-// Runtime: 4.11309 ms
+// Runtime: 2.68217 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 #include <iostream>
@@ -31,7 +31,7 @@ __global__ void sum(const float* input, float* output, int N) {
 
 // input, output are device pointers
 void solve(const float* input, float* output, int N) {  
-    const int threadsPerBlock = 1024;
+    const int threadsPerBlock = 64;
     int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
     sum<<<blocksPerGrid, threadsPerBlock, threadsPerBlock*sizeof(float)>>>(input, output, N);
     cudaDeviceSynchronize();  
