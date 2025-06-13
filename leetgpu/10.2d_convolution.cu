@@ -1,21 +1,40 @@
 // URL: https://leetgpu.com/challenges/2d-convolution
 // GPU: NVIDIA TESLA T4
-// Runtime: 68.4627 ms
+// Runtime: 6.67979 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 
 
 __global__ void convolution_2d_kernel(const float* input, const float* kernel, float* output,
                                       int input_rows, int input_cols, int kernel_rows, int kernel_cols) {
-    __shared__ float shared_kernel[1024];
+    __shared__ float shared_kernel[1024];//more than 31*31
+    __shared__ float shared_input[4096];//(blockDim.x+kernel_rows)*(blockDim.x+kernel_cols) < 64*64
 
     const int output_rows = input_rows - kernel_rows + 1;
     const int output_cols = input_cols - kernel_cols + 1;
     const int idx = blockIdx.x * blockDim.x + threadIdx.x;
     const int idy = blockIdx.y * blockDim.y + threadIdx.y;
+    const int shared_input_rows = blockDim.x + kernel_rows;//current block can only reach to max(threadIdx.x+kidx)_rd row, which is blockDim.x+kernel_rows
+    const int shared_input_cols = blockDim.y + kernel_cols;
 
     if(threadIdx.x < kernel_rows && threadIdx.y < kernel_cols) {
         shared_kernel[threadIdx.x*kernel_cols + threadIdx.y] = kernel[threadIdx.x*kernel_cols + threadIdx.y];
+    }
+    if (idx < input_rows && idy < input_cols) {
+        shared_input[threadIdx.x*shared_input_cols+threadIdx.y] = input[idx*input_cols+idy];
+    }
+    if((blockDim.x+idx) < input_rows && (blockDim.y+idy) < input_cols 
+    && threadIdx.x < kernel_rows && threadIdx.y < kernel_cols) {
+        shared_input[(blockDim.x+threadIdx.x)*shared_input_cols+blockDim.y+threadIdx.y] = input[(blockDim.x+idx)*input_cols+blockDim.y+idy];
+    }
+    // in first try I forgot to copy this right and bottom side rectangles and only copyied right-bottom small rectangle and main square
+    if((blockDim.x+idx) < input_rows && idy < input_cols 
+    && threadIdx.x < kernel_rows) {
+        shared_input[(blockDim.x+threadIdx.x)*shared_input_cols+threadIdx.y] = input[(blockDim.x+idx)*input_cols+idy];
+    }
+    if(idx < input_rows && (blockDim.y+idy) < input_cols 
+    && threadIdx.y < kernel_cols) {
+        shared_input[threadIdx.x*shared_input_cols+blockDim.y+threadIdx.y] = input[idx*input_cols+blockDim.y+idy];
     }
 
     __syncthreads();
@@ -24,7 +43,7 @@ __global__ void convolution_2d_kernel(const float* input, const float* kernel, f
         float out = 0.0;
         for(int kidx = 0; kidx < kernel_rows; ++kidx) {
             for(int kidy = 0; kidy < kernel_cols; ++kidy) {
-                out += shared_kernel[kidx*kernel_cols + kidy]*input[(idx+kidx)*input_cols+idy+kidy];
+                out += shared_kernel[kidx*kernel_cols + kidy]*shared_input[(kidx+threadIdx.x)*shared_input_cols+kidy+threadIdx.y];
             }
         }
         output[idx*output_cols + idy] = out;
