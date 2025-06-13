@@ -1,18 +1,13 @@
 // URL: https://leetgpu.com/challenges/relu-activation
 // GPU: NVIDIA TESLA T4
-// Runtime: 1.07525 ms
+// Runtime: 0.80648 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 
 __global__ void relu_kernel(const float* input, float* output, int N) {
     int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
     if(idx < N) {
-        const float val = input[idx];
-        if(val <= 0) {
-            output[idx] = 0;
-        } else {
-            output[idx] = val;
-        }
+        output[idx] = fmaxf(input[idx],0);
     }
 }
 
