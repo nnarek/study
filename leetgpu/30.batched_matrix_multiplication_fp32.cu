@@ -1,53 +1,43 @@
 // URL: https://leetgpu.com/challenges/batched-matrix-multiplication-fp32
 // GPU: NVIDIA TESLA T4
-// Runtime: 2.74412 ms
+// Runtime: 1.68983 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 
+// we can try to reuse code of 2d multiplication
 // from https://leetgpu.com/challenges/matrix-multiplication
-__global__ void matrix_multiplication_kernel(const float* A, const float* B, float* C, int M, int N, int K) {
+__forceinline__  __device__ void matrix_multiplication_kernel_inline(const float* A, const float* B, float* C, int M, int N, int K) {
     int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
     int idy = (blockIdx.y * blockDim.y) + threadIdx.y;
-    if(idx < K && idy < M) {
+    if(idx < N && idy < M) {
         float sum = 0.0;
-        for(int index = 0; index < N; ++index) {
-            sum += A[idy*N+index]*B[index*K+idx];
+        for(int index = 0; index < K; ++index) {
+            sum += A[idy*K+index]*B[index*N+idx];
         }
-        C[idy*K+idx] = sum;
+        C[idy*N+idx] = sum;
     }
 }
 
-// A, B, C are device pointers (i.e. pointers to memory on the GPU)
-void matrix_multiplication(const float* A, const float* B, float* C, int M, int N, int K, cudaStream_t stream) {
-    dim3 threadsPerBlock(16, 16);
-    dim3 blocksPerGrid((K + threadsPerBlock.x - 1) / threadsPerBlock.x,
-                       (M + threadsPerBlock.y - 1) / threadsPerBlock.y);
-    
-    matrix_multiplication_kernel<<<blocksPerGrid, threadsPerBlock, 0, stream>>>(A, B, C, M, N, K);
-}
-
-
-// A, B, C are device pointers
-void solve(const float* A, const float* B, float* C, int BATCH, int M, int N, int K) {
-
-    const int max_num_streams = 32;
-    cudaStream_t streams[max_num_streams];
-    const int num_streams = min(max_num_streams,BATCH);
-    
-    for (int i = 0; i < num_streams; ++i) {
-        cudaStreamCreate(&streams[i]);
-    }
-
-    for (int batch_index = 0; batch_index < BATCH; ++batch_index) {
+// unlike solution with streams, here scheduler of gpu will decide when and which parts of jobs execute(parallely or not parallely)
+// we can stil reuse code of 2d matrix multiplication
+__global__ void batch_matrix_multiplication_kernel(const float* A, const float* B, float* C, int BATCH, int M, int N, int K) {
+    int batch_index = (blockIdx.z * blockDim.z) + threadIdx.z;
+    if(batch_index < BATCH) {
         const float* A_ptr = A + M * K * batch_index;
         const float* B_ptr = B + K * N * batch_index;
         float* C_ptr = C + M * N * batch_index;
-        matrix_multiplication(A_ptr, B_ptr, C_ptr, M, K, N, streams[batch_index%num_streams]);
+        // we also can use dynamic parallelism to run matrix_multiplication kernel from inside this batched kernel
+        // but I guess it will have lower performance compared with current solution 
+        matrix_multiplication_kernel_inline(A_ptr, B_ptr, C_ptr, M, N, K);
     }
-    cudaDeviceSynchronize();//waiting to all streams
-    
-    for (int i = 0; i < num_streams; ++i) {
-        cudaStreamDestroy(streams[i]);
-    }
+}
+
+// A, B, C are device pointers
+void solve(const float* A, const float* B, float* C, int BATCH, int M, int N, int K) {
+    dim3 threadsPerBlock(32, 32, 1);
+    dim3 blocksPerGrid((N + threadsPerBlock.x - 1) / threadsPerBlock.x,
+                        (M + threadsPerBlock.y - 1) / threadsPerBlock.y,
+                        (BATCH + threadsPerBlock.z - 1) / threadsPerBlock.z);
+    batch_matrix_multiplication_kernel<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, BATCH, M, N, K);
 }
     
