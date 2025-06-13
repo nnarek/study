@@ -1,6 +1,6 @@
 // URL: https://leetgpu.com/challenges/softmax
 // GPU: NVIDIA TESLA T4
-// Runtime: 1.91665 ms
+// Runtime: 1.54903 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 
@@ -20,20 +20,6 @@ __device__ float atomicMaxFloat(float* addr, float value) {
     return __int_as_float(old);
 }
 
-__forceinline__ __device__ float max2(const float& a, const float& b) {
-    // computing max of two float branchless 
-    int32_t b_is_max = a < b;
-    b_is_max = -b_is_max; // now, a_is_max contain only 0s or only 1s
-    const int32_t a_is_max = ~b_is_max;
-
-    const int32_t ia = *(int32_t*)&a;
-    const int32_t ib = *(int32_t*)&b;
-
-    const int32_t result_bits = (ia & a_is_max) | (ib & b_is_max);
-    
-    return *(float*)&result_bits;
-}
-
 __global__ void max_kernel(const float* input, float* max, int N) {
     extern __shared__ float sharedMem[];
 
@@ -47,7 +33,7 @@ __global__ void max_kernel(const float* input, float* max, int N) {
     int shift_tid = threadIdx.x + 1;
     for (int shift = 1; shift < blockDim.x; shift <<= 1) {
         if(shift_tid < blockDim.x) {
-            sharedMem[shift_tid - shift] = max2(sharedMem[shift_tid - shift], sharedMem[shift_tid]);
+            sharedMem[shift_tid - shift] = fmaxf(sharedMem[shift_tid - shift], sharedMem[shift_tid]);
         } 
         __syncthreads();
         shift_tid <<= 1;
