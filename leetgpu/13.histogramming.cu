@@ -1,30 +1,40 @@
 // URL: https://leetgpu.com/challenges/histogramming
 // GPU: NVIDIA TESLA T4
-// Runtime: 1.30856 ms
+// Runtime: 0.92512 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 
+constexpr int threadsPerBlock = 256;
+constexpr int numIter = 1024/threadsPerBlock;
+
 __global__ void histogram_kernel(const int* input, int* histogram, int N, int num_bins) {
-    extern __shared__ int shm_hist[];
+    __shared__ int shm_hist[1024];
     
-    int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-    if(idx < N) {
-        if(threadIdx.x < num_bins) {
-            shm_hist[threadIdx.x] = 0;
+    int idx = (blockIdx.x * numIter*threadsPerBlock) + threadIdx.x;
+
+    #pragma unroll
+    for(int i = 0; i < numIter; ++i) {
+        shm_hist[i*threadsPerBlock+threadIdx.x] = 0;
+    }
+
+    __syncthreads();
+    #pragma unroll
+    for(int i = 0; i < numIter; ++i) {
+        if((i*threadsPerBlock+idx) < N) {
+            atomicAdd(shm_hist + input[i*threadsPerBlock+idx], 1);
         }
-        __syncthreads();
-        atomicAdd(shm_hist + input[idx],1);
-        __syncthreads();
-        if(threadIdx.x < num_bins) {
-            atomicAdd(histogram + threadIdx.x,shm_hist[threadIdx.x]);
-        }
+    }
+    __syncthreads();
+    #pragma unroll
+    for(int i = 0; i < numIter; ++i) {
+        if((i*threadsPerBlock+threadIdx.x) < num_bins) {
+            atomicAdd(histogram + i*threadsPerBlock+threadIdx.x, shm_hist[i*threadsPerBlock+threadIdx.x]);
+        } 
     }
 }
 
-// input, histogram are device pointers
 void solve(const int* input, int* histogram, int N, int num_bins) {
-    const int threadsPerBlock = 1024;
-    int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
-    histogram_kernel<<<blocksPerGrid, threadsPerBlock, num_bins*sizeof(int)>>>(input, histogram, N, num_bins);
+    int blocksPerGrid = (N + numIter * threadsPerBlock - 1) / (numIter * threadsPerBlock);
+    histogram_kernel<<<blocksPerGrid, threadsPerBlock>>>(input, histogram, N, num_bins);
     cudaDeviceSynchronize();
 }
