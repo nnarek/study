@@ -1,0 +1,8 @@
+namespace Kata {
+    operation AllBasisVectorsWithComplexPhases_TwoQubits (qs : Qubit[]) : Unit is Adj + Ctl {
+        H(qs[0]);
+        H(qs[1]);
+        Z(qs[0]);
+        S(qs[1]);
+    }
+}

@@ -288,7 +288,15 @@ Example subtyping_example_1 :
   TRcd_kj <: TRcd_j.
 (* {k:A->A,j:B->B} <: {j:B->B} *)
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  unfold TRcd_kj, TRcd_j. 
+  eapply S_Trans. 
+  - apply S_RcdPerm; auto. unfold not. intros. inversion H.
+  - apply S_RcdDepth.
+    + apply S_Refl...
+    + apply S_RcdWidth...
+    + auto.
+    + auto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (subtyping_example_2) *)
@@ -296,7 +304,9 @@ Example subtyping_example_2 :
   <{{ Top -> TRcd_kj }}> <:
           <{{ (C -> C) -> TRcd_j }}>.
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  eapply S_Arrow...
+  apply subtyping_example_1.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (subtyping_example_3) *)
@@ -304,8 +314,9 @@ Example subtyping_example_3 :
   <{{ nil -> (j : A :: nil) }}> <:
           <{{ (k : B :: nil) -> nil }}>.
 (* {}->{j:A} <: {k:B}->{} *)
-Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+Proof with eauto.  
+  eapply S_Arrow...
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (subtyping_example_4) *)
@@ -313,7 +324,16 @@ Example subtyping_example_4 :
   <{{ x : A :: y : B :: z : C :: nil }}> <:
   <{{ z : C :: y : B :: x : A :: nil }}>.
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  eapply S_Trans. 
+  - apply S_RcdPerm... unfold not. intros. inversion H.
+  - apply S_Trans with <{{ "y" : B :: "z" : C  ::  "x" : A :: nil }}>.
+    + apply S_RcdDepth... eapply S_Trans. 
+      * apply S_RcdPerm... unfold not. intros. inversion H.
+      * auto.
+    + eapply S_Trans. 
+      * apply S_RcdPerm... unfold not. intros. inversion H.
+      * auto.
+Qed.
 (** [] *)
 
 End Examples.
@@ -417,7 +437,11 @@ Proof with eauto.
   intros U V1 V2 Hs.
   remember <{{ V1 -> V2 }}> as V.
   generalize dependent V2. generalize dependent V1.
-  (* FILL IN HERE *) Admitted.
+  induction Hs; intros; try solve_by_invert... subst... 
+  - inversion H. exists V1. exists V2. split...
+  - destruct (IHHs2 _ _ HeqV). destruct H. destruct H. destruct (IHHs1 _ _ H). destruct H1. destruct H1. exists x1. exists x2. destruct H0. split... destruct H2. split...
+  - inversion HeqV. subst. exists S1. exists S2. split...
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -478,8 +502,21 @@ Example typing_example_0 :
   empty |-- trcd_kj \in TRcd_kj.
 (* empty |-- {k=(\z:A.z), j=(\z:B.z)} : {k:A->A,j:B->B} *)
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold trcd_kj,TRcd_kj,TRcd_j.
+  constructor; eauto.
+Qed.
 (** [] *)
+
+Lemma typing_example_without_weakening : forall Gamma, Gamma |-- trcd_kj \in TRcd_j.
+Proof with eauto.
+  intros.
+  unfold trcd_kj,TRcd_kj,TRcd_j.
+  apply T_Sub with <{{ "k" : A -> A :: "j" : B -> B :: nil }}>.
+  * eauto 10.
+  * eapply S_Trans. 
+    ** apply S_RcdPerm... unfold not. intros. inversion H.
+    ** eauto 10.
+Qed.
 
 (** **** Exercise: 2 stars, standard (typing_example_1) *)
 Example typing_example_1 :
@@ -488,7 +525,11 @@ Example typing_example_1 :
               {k=(\z:A,z), j=(\z:B,z)}
          : B->B *)
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  unfold trcd_kj,TRcd_kj,TRcd_j.
+  eapply T_App.
+  - eapply T_Abs...
+  - apply typing_example_without_weakening.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (typing_example_2) *)
@@ -499,7 +540,12 @@ Example typing_example_2 :
               (\z:C->C, {k=(\z:A,z), j=(\z:B,z)})
            : B->B *)
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  eapply T_App.
+  - eapply T_Abs... 
+    + unfold TRcd_j... (* TODO why "eauto using TRcd_j" does not work? *)
+    + unfold TRcd_j. eauto 10.
+  - constructor... apply typing_example_without_weakening.
+Qed.
 (** [] *)
 
 End Examples2.
@@ -569,7 +615,13 @@ Lemma canonical_forms_of_arrow_types : forall Gamma s T1 T2,
      exists x S1 s2,
         s = <{ \ x  : S1, s2 }>.
 Proof with eauto.
-  (* FILL IN HERE *) Admitted.
+  intros.
+  remember <{{T1 -> T2}}> as Ha.
+  generalize dependent T1. generalize dependent T2.
+  induction H; intros; try solve_by_invert.
+  - inversion HeqHa. subst. exists x. exists T1. exists t12. reflexivity.
+  - subst. destruct (sub_inversion_arrow _ _ _ H1). destruct H2. destruct H2...
+Qed.
 (** [] *)
 
 Theorem progress : forall t T,

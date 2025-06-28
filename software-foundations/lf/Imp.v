@@ -2422,7 +2422,7 @@ Proof.
       *inversion H0; subst. 
         **rewrite H3 in H9. discriminate. 
         **destruct (IHc st st' st2 SContinue SBreak H4 H10). discriminate.
-        **apply (IHc st st1 st2 SContinue SContinue).
+        **apply (IHc st st1 st2 SContinue SContinue); admit.
   Restart.
   intros.
   remember c as Hc.
@@ -2431,10 +2431,30 @@ Proof.
   -inversion H0. subst. split; reflexivity.
   -inversion H0. subst. split; reflexivity.
   -inversion H0; subst.
-    +apply IHceval; admit.
+    +apply IHceval; auto. 
   Restart.
-  
-  (* FILL IN HERE *) Admitted.
+  intros c st st1 st2 s1 s2 H1 H2.
+  generalize dependent s2.
+  generalize dependent st2.
+  induction H1; intros st2 s2 H2; inversion H2; subst;
+    try (split; reflexivity);
+    try (rewrite H in *; discriminate).
+  - apply IHceval. assumption. 
+  - destruct (IHceval _ _ H3). discriminate.
+  - destruct (IHceval _ _ H3). discriminate.
+  - destruct (IHceval1 _ _ H5). discriminate.
+  - destruct (IHceval1 _ _ H1). subst. destruct (IHceval2 _ _ H6). subst. split; reflexivity.
+  - destruct (IHceval1 _ _ H1). subst. destruct (IHceval2 _ _ H6). discriminate.
+  - destruct (IHceval1 _ _ H5). discriminate.
+  - destruct (IHceval1 _ _ H1). subst. destruct (IHceval2 _ _ H6). discriminate.
+  - destruct (IHceval1 _ _ H1). subst. destruct (IHceval2 _ _ H6). subst. split; reflexivity.
+  - apply IHceval. assumption. 
+  - apply IHceval. assumption.
+  - destruct (IHceval _ _ H8). subst. split; reflexivity.
+  - destruct (IHceval _ _ H5). discriminate.
+  - destruct (IHceval1 _ _ H7). discriminate. 
+  - destruct (IHceval1 _ _ H4). subst. destruct (IHceval2 _ _ H8). subst. split; reflexivity.
+Qed.
 
 (** [] *)
 End BreakImp.

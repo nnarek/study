@@ -1496,6 +1496,50 @@ Proof.
     +apply IHb in H2. destruct H2. destruct H2. exists (x::x0). exists x1. simpl. destruct H2. split. apply H2. f_equal. apply H4.
 Qed.
 
+
+Theorem subseq_app2 : forall (l1 l2 l3 : list nat),
+  subseq l1 l2 ->
+  subseq l1 (l3 ++ l2).
+Proof.
+  intros l1 l2 l3.
+  generalize dependent l1. generalize dependent l2.
+  induction l3; intros; simpl.
+  - assumption.
+  - apply ssuc. apply (IHl3 _ _ H).
+Qed.
+
+Lemma app_subseq : forall (a b c: list nat),
+  subseq (a ++ b) c -> (subseq a c /\ subseq b c).
+Proof.
+  induction a; intros.
+  - simpl in *. split.
+    + apply empty_subseq_l.
+    + assumption.
+  - simpl in *. split.
+    + 
+  Restart.
+  intros a b c.
+  generalize dependent a. generalize dependent b.
+  induction c; intros.
+  - inversion H. split.
+    + apply subseq_app. constructor.
+    + apply subseq_app2. constructor.
+  - split.
+    + inversion H; subst.
+      * apply subseq_app. constructor.
+      * destruct a; simpl in *.
+        -- apply empty_subseq_l.
+        -- inversion H0. subst. destruct (IHc _ _ H2). constructor. assumption.
+      * destruct (IHc _ _ H2). constructor. assumption. 
+    + inversion H; subst.
+      * apply subseq_app2. constructor.
+      * destruct a; simpl in *.
+        -- assumption.
+        -- inversion H0. subst. destruct (IHc _ _ H2). constructor. assumption.
+      * destruct (IHc _ _ H2). constructor. assumption. 
+Qed.
+
+
 Theorem subseq_trans : forall (l1 l2 l3 : list nat),
   subseq l1 l2 ->
   subseq l2 l3 ->
@@ -1527,30 +1571,13 @@ Proof.
     +admit.
 
   Restart.
-  induction l1.
-  -admit.
-  -intros. apply subseq_split in H. do 3 (destruct H). 
-  (* Restart.
-  induction l2.
-  -simpl. intros. inversion H. apply H0.
-  -simpl. intros. inversion H. 
-    +apply H0.
-    +rewrite H1 in H2. rewrite H2. inversion H0.
-      {apply H. }
-      {admit. }
-      {admit. }
-    +apply IHl2. 
-      {apply H3. }
-      {admit. } *)
-
-
-
-
-
-
+  (* TODO try to find short proof without big intermediate lemmas *)
+  induction l1; intros.
+  - apply empty_subseq_l.
+  - apply subseq_split in H. do 3 (destruct H). subst. destruct (app_subseq _ _ _ H0). apply subseq_split in H2. do 3 destruct H2. subst. specialize (IHl1 _ _ H H2) as H'. apply (sh _ _ x) in H'. apply subseq_app2. assumption. 
   (* Hint: be careful about what you are doing induction on and which
      other things need to be generalized... *)
-  (* FILL IN HERE *) Admitted.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (R_provability2)
@@ -2834,6 +2861,65 @@ Qed.
      forall l, l = rev l -> pal l.
 *)
 
+Lemma list_back_inversion : forall {X : Type} (l : list X), 
+  l = [] \/ exists y l', l = l' ++ [y].
+  induction l.
+  - auto.
+  - right. destruct IHl; subst.
+    + exists x. exists []. reflexivity.
+    + destruct H. destruct H. subst. exists x0. exists (x::x1). reflexivity.
+Qed. 
+
+Theorem list_2_step_induction: forall (X : Type) (P : list X -> Prop),
+  P [] -> (forall x, P [x]) -> (forall x y (l : list X), P l -> P ([x] ++ l ++ [y])) -> forall l' : list X, P l'.
+Proof.
+  simpl.
+  induction l'.
+  - assumption.
+  - destruct (list_back_inversion l').
+    + subst. eauto.
+    + destruct H2. destruct H2. subst. apply H1. 
+Abort.
+
+Fail Fixpoint list_2_step_induction' (X : Type) (P : list X -> Prop)
+(p0 : P []) (fx : forall x, P [x]) (fxy : forall x y (l : list X), P l -> P ([x] ++ l ++ [y])) (l' : list X) : P l' :=
+  match l' with 
+  | [] => p0
+  | a::t' =>  match rev t' with 
+            | [] => fx a
+            | b::t => a
+            end
+  end. 
+
+
+
+
+
+
+Fixpoint nat_2_step_ind (P : nat -> Prop)
+(p0 : P 0) (p1 : P 1) (pn2 : forall n, P n -> P (S (S n)) ) (n : nat) : P n :=
+  match n with 
+  |0 => p0
+  |1 => p1
+  |S (S n'') => pn2 n'' (nat_2_step_ind P p0 p1 pn2 n'')
+  end. 
+
+Theorem list_2_step: forall (X : Type) (P : list X -> Prop),
+  P [] -> (forall x, P [x]) -> (forall x y (l : list X), P l -> P (x :: l ++ [y])) -> forall (l : list X), P l.
+Proof.
+  intros X P p0 px pxy l.
+  remember (length l) as n.
+  generalize dependent l.
+  induction n using nat_2_step_ind;
+  intros; destruct l; auto.
+  - simpl in *. discriminate.
+  - inversion Heqn. destruct l; auto. simpl in *. discriminate.
+  - rewrite <- (rev_involutive X l) in *. destruct (rev l); auto.
+    simpl in *. apply pxy. apply IHn. rewrite app_length in *. rewrite add_comm in Heqn. simpl in *. injection Heqn as Heqn. assumption. 
+Qed.
+
+Search (rev (?l1 ++ ?l2)). 
+Search (_ ++ _ = _ ++ _).
 Theorem palindrome_converse: forall {X: Type} (l: list X),
     l = rev l -> pal l.
 Proof.
@@ -2865,8 +2951,25 @@ Proof.
   Restart.
   induction l.
   -admit.
-  -simpl. remember (rev l) as rl.     
-  (* FILL IN HERE *) Admitted.
+  -simpl. remember (rev l) as rl.    
+  Restart.
+  induction l.
+  -intros. apply pal_e.
+  -simpl. intros. destruct (rev l) eqn:E.
+    + inversion H. subst. constructor. 
+    + simpl in H. inversion H. subst.
+  Restart.
+  intros X l.
+  apply (list_2_step X (fun l => l = rev l -> pal l)); intros; try constructor.
+  simpl in *. rewrite rev_app_distr in H0. 
+  simpl in *. inversion H0. subst. constructor. apply H. 
+  apply (f_equal _ _ rev) in H3. simpl in *. 
+  repeat rewrite rev_app_distr in H3. simpl in *. 
+  inversion H3. rewrite rev_involutive in H2. rewrite H2. reflexivity.
+Qed.
+
+
+
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced, optional (NoDup)

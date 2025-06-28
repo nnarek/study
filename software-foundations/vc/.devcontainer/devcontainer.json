@@ -1,0 +1,30 @@
+{
+  "image": "bcpierce00/cis5000:8.17",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "coq-community.vscoq1"
+      ],
+      "settings": {
+        "coqtop.binPath" : "/home/coq/.opam/4.14.1+flambda/bin",
+        "files.exclude": {
+          "**/*.aux": true,
+          "**/*.glob": true,
+          "**/*.vo": true,
+          "**/*.vos": true,
+          "**/*.vok": true,
+          "**/*.html": true,
+          "**/.*.report": true,
+          "**/.*.cache": true
+        },
+        "coq.loadCoqProject": true,
+        "coq.coqProjectRoot": ".",
+        "[coq]": {
+          "editor.tabSize": 2,
+          "editor.insertSpaces": true
+        }
+      }
+    }
+  },
+  "postCreateCommand": "opam repo add coq-released https://coq.inria.fr/opam/released && opam install --confirm-level=unsafe-yes --yes coq-vst"
+}

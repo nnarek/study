@@ -2007,7 +2007,6 @@ Qed.
     encoded in Coq without assuming additional axioms. *)
 
 
-(* TODO understand what is saying here *)
 (** **** Exercise: 3 stars, standard (excluded_middle_irrefutable)
 
     Proving the consistency of Coq with the general excluded middle
@@ -2029,13 +2028,12 @@ Proof.
   unfold not.
   intros.
   apply H.
-  
-  Fail apply restricted_excluded_middle.
-  
-
-
-  
-  (* FILL IN HERE *) Admitted.
+  right.
+  intros.
+  apply H.
+  left.
+  assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (not_exists_dist)
@@ -2149,18 +2147,17 @@ Proof.
 unfold excluded_middle.
 unfold peirce.
 split; intros.
+(* - intros. specialize (H ) *)
 (* -left. apply  (H P P). intros Hp. apply Hp. intros Hpp. apply Hpp. *)
 (* -apply  (H (P \/ ~P) (~(P \/ ~P))). intros Hp. exfalso. apply Hp. *)
--admit.
+-apply H with False. intros not_lem. right. unfold not. intros. apply not_lem. left. assumption.
 -destruct (H P).
   +apply H1.
   +destruct (H Q).
     *apply H0. intros. apply H2.
     *apply H0. intros. exfalso. apply H1. apply H3.
-Admitted.
+Qed.
 
-(* FILL IN HERE
-
-    [] *)
+(* [] *)
 
 (* 2023-12-29 17:12 *)

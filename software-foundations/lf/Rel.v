@@ -237,8 +237,12 @@ Theorem le_S_n : forall n m,
   (S n <= S m) -> (n <= m).
 Proof.
   intros.
-  (* use transitive relation*)
-  (* FILL IN HERE *) Admitted.
+  inversion H.
+  - apply le_n.
+  - apply le_trans with (S n).
+    + apply le_S. apply le_n.
+    + assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (le_Sn_n_inf)
@@ -261,8 +265,10 @@ Theorem le_Sn_n : forall n,
 Proof.
   unfold not.
   intros.
-  (* use transitive relation*)
-  (* FILL IN HERE *) Admitted.
+  induction n.
+  - inversion H.
+  - apply IHn. apply le_S_n in H. assumption.
+Qed.
 (** [] *)
 
 (** Reflexivity and transitivity are the main concepts we'll need for

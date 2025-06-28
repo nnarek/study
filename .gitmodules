@@ -1,0 +1,43 @@
+[submodule "plfa"]
+	path = plfa
+	url = https://github.com/nnarek/plfa_solutions
+[submodule "csclub-coq-course-spring-2021"]
+	path = csclub-coq-course-spring-2021
+	url = https://github.com/nnarek/csclub-coq-course-spring-2021
+[submodule "csc-cuda"]
+	path = csc-cuda
+	url = https://github.com/nnarek/csc-cuda
+[submodule "bronze-qiskit"]
+	path = bronze-qiskit
+	url = https://github.com/nnarek/bronze-qiskit
+[submodule "GPU-Puzzles"]
+	path = GPU-Puzzles
+	url = https://github.com/nnarek/GPU-Puzzles
+[submodule "GlimpseOfLean"]
+	path = GlimpseOfLean
+	url = https://github.com/nnarek/GlimpseOfLean
+[submodule "tutoriel_framac_wp"]
+	path = tutoriel_framac_wp
+	url = https://github.com/nnarek/tutoriel_framac_wp
+[submodule "logical_verification_2024"]
+	path = logical_verification_2024
+	url = https://github.com/nnarek/logical_verification_2024
+[submodule "mathematics_in_lean"]
+	path = mathematics_in_lean
+	url = https://github.com/nnarek/mathematics_in_lean
+[submodule "arend-tutorial-code"]
+	path = arend-tutorial-code
+	url = https://github.com/nnarek/arend-tutorial-code
+[submodule "HoTTEST-Summer-School"]
+	path = HoTTEST-Summer-School
+	url = https://github.com/nnarek/HoTTEST-Summer-School
+[submodule "HTPILeanPackage"]
+	path = HTPILeanPackage
+	url = https://github.com/nnarek/HTPILeanPackage
+[submodule "pnp-coq"]
+	path = pnp-coq
+	url = https://github.com/nnarek/pnp-coq
+[submodule "learn-prolog-now"]
+	path = learn-prolog-now
+	url = https://github.com/nnarek/learn-prolog-now
+	branch = solutions

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.lamport.tla.toolbox.tool.tlc.modelCheck">
+    <stringAttribute key="configurationName" value="Model_1"/>
+    <intAttribute key="distributedFPSetCount" value="0"/>
+    <stringAttribute key="distributedNetworkInterface" value="192.168.0.176"/>
+    <intAttribute key="distributedNodesCount" value="1"/>
+    <stringAttribute key="distributedTLC" value="off"/>
+    <intAttribute key="fpIndex" value="78"/>
+    <intAttribute key="maxHeapSize" value="25"/>
+    <stringAttribute key="modelBehaviorInit" value=""/>
+    <stringAttribute key="modelBehaviorNext" value=""/>
+    <stringAttribute key="modelBehaviorSpec" value="Spec"/>
+    <intAttribute key="modelBehaviorSpecType" value="1"/>
+    <stringAttribute key="modelBehaviorVars" value="flag, pc"/>
+    <stringAttribute key="modelComments" value=""/>
+    <booleanAttribute key="modelCorrectnessCheckDeadlock" value="true"/>
+    <listAttribute key="modelCorrectnessInvariants"/>
+    <listAttribute key="modelCorrectnessProperties">
+        <listEntry value="0\A id \in Procs : &lt;&gt;(pc[id] = &quot;cs&quot;)"/>
+        <listEntry value="1(pc[0] = &quot;enter&quot;) ~&gt; (pc[0] = &quot;cs&quot;)"/>
+        <listEntry value="1  (\E i \in Procs : pc[i] = &quot;enter&quot;) ~&gt; (\E i \in Procs : pc[i] = &quot;cs&quot;)"/>
+    </listAttribute>
+    <intAttribute key="modelEditorOpenTabs" value="8"/>
+    <stringAttribute key="modelExpressionEval" value=""/>
+    <listAttribute key="modelParameterConstants">
+        <listEntry value="Procs;;0..(N-1);0;0"/>
+        <listEntry value="N;;2;0;0"/>
+    </listAttribute>
+    <intAttribute key="modelVersion" value="20191005"/>
+    <intAttribute key="numberOfWorkers" value="6"/>
+    <stringAttribute key="result.mail.address" value=""/>
+    <stringAttribute key="specName" value="Session9_ex2"/>
+    <stringAttribute key="tlcResourcesProfile" value="local custom"/>
+</launchConfiguration>

@@ -1,0 +1,201 @@
+@!@!@STARTMSG 2262:0 @!@!@
+TLC2 Version 2.20 of Day Month 20?? (rev: bacd9d2)
+@!@!@ENDMSG 2262 @!@!@
+@!@!@STARTMSG 2187:0 @!@!@
+Running breadth-first search Model-Checking with fp 130 and seed 3339634595593929602 with 6 workers on 12 cores with 1205MB heap and 2707MB offheap memory [pid: 29316] (Windows 10 10.0 amd64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+@!@!@ENDMSG 2187 @!@!@
+@!@!@STARTMSG 2220:0 @!@!@
+Starting SANY...
+@!@!@ENDMSG 2220 @!@!@
+Parsing file G:\root\genesis\study_final\tla_pluscal_tutorial\Session4_pz1.toolbox\Model_1\MC.tla
+Parsing file G:\root\genesis\study_final\tla_pluscal_tutorial\Session4_pz1.toolbox\Model_1\Session4_pz1.tla
+Labels added.
+Parsing file G:\Downloads\TLAToolbox-1.8.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202503152004\tla2sany\StandardModules\TLC.tla
+Parsing file G:\Downloads\TLAToolbox-1.8.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202503152004\tla2sany\StandardModules\Integers.tla
+Parsing file G:\Downloads\TLAToolbox-1.8.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202503152004\tla2sany\StandardModules\Sequences.tla
+Parsing file G:\Downloads\TLAToolbox-1.8.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202503152004\tla2sany\StandardModules\Naturals.tla
+Parsing file G:\Downloads\TLAToolbox-1.8.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202503152004\tla2sany\StandardModules\FiniteSets.tla
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Session4_pz1
+Semantic processing of module MC
+@!@!@STARTMSG 2219:0 @!@!@
+SANY finished.
+@!@!@ENDMSG 2219 @!@!@
+@!@!@STARTMSG 2185:0 @!@!@
+Starting... (2025-03-23 16:44:23)
+@!@!@ENDMSG 2185 @!@!@
+@!@!@STARTMSG 2189:0 @!@!@
+Computing initial states...
+@!@!@ENDMSG 2189 @!@!@
+@!@!@STARTMSG 2190:0 @!@!@
+Finished computing initial states: 1 distinct state generated at 2025-03-23 16:44:24.
+@!@!@ENDMSG 2190 @!@!@
+@!@!@STARTMSG 2193:0 @!@!@
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 1.1E-19
+@!@!@ENDMSG 2193 @!@!@
+@!@!@STARTMSG 2201:0 @!@!@
+The coverage statistics at 2025-03-23 16:44:24
+@!@!@ENDMSG 2201 @!@!@
+@!@!@STARTMSG 2773:0 @!@!@
+<Init line 23, col 1 to line 23, col 4 of module Session4_pz1>: 1:1
+@!@!@ENDMSG 2773 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 23, col 9 to line 23, col 23 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Lbl_1 line 25, col 1 to line 25, col 5 of module Session4_pz1>: 1:1
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 25, col 13 to line 25, col 24 of module Session4_pz1: 3
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 25, col 13 to line 25, col 14 of module Session4_pz1: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 26, col 13 to line 27, col 64 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 26, col 20 to line 26, col 49 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 26, col 20 to line 26, col 43 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 5, col 17 to line 5, col 56 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 5, col 35 to line 5, col 54 of module Session4_pz1: 3
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 5, col 48 to line 5, col 54 of module Session4_pz1: 5
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 5, col 44 to line 5, col 44 of module Session4_pz1: 3
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 5, col 24 to line 5, col 30 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |||line 26, col 30 to line 26, col 42 of module Session4_pz1: 1:12
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 26, col 31 to line 26, col 35 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 26, col 37 to line 26, col 41 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 26, col 47 to line 26, col 49 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 28, col 13 to line 29, col 64 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 28, col 20 to line 28, col 48 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 28, col 20 to line 28, col 43 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 5, col 17 to line 5, col 56 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 5, col 35 to line 5, col 54 of module Session4_pz1: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 5, col 48 to line 5, col 54 of module Session4_pz1: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 5, col 44 to line 5, col 44 of module Session4_pz1: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 5, col 24 to line 5, col 30 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |||line 28, col 30 to line 28, col 42 of module Session4_pz1: 1:15
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 28, col 31 to line 28, col 35 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 28, col 37 to line 28, col 41 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 28, col 47 to line 28, col 48 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 30, col 13 to line 31, col 64 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 30, col 20 to line 30, col 57 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 30, col 20 to line 30, col 49 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 5, col 17 to line 5, col 56 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 5, col 35 to line 5, col 54 of module Session4_pz1: 3
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 5, col 48 to line 5, col 54 of module Session4_pz1: 5
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||||line 5, col 44 to line 5, col 44 of module Session4_pz1: 3
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 5, col 24 to line 5, col 30 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2775:0 @!@!@
+  |||line 30, col 30 to line 30, col 48 of module Session4_pz1: 1:12
+@!@!@ENDMSG 2775 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 30, col 31 to line 30, col 39 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||||line 30, col 41 to line 30, col 47 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 30, col 53 to line 30, col 57 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 32, col 13 to line 32, col 24 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Terminating line 35, col 1 to line 35, col 11 of module Session4_pz1>: 0:1
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 35, col 16 to line 35, col 26 of module Session4_pz1: 3
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 35, col 16 to line 35, col 17 of module Session4_pz1: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 35, col 31 to line 35, col 44 of module Session4_pz1: 1
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2202:0 @!@!@
+End of statistics.
+@!@!@ENDMSG 2202 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(2) at 2025-03-23 16:44:24: 3 states generated (222 s/min), 2 distinct states found (148 ds/min), 0 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2199:0 @!@!@
+3 states generated, 2 distinct states found, 0 states left on queue.
+@!@!@ENDMSG 2199 @!@!@
+@!@!@STARTMSG 2194:0 @!@!@
+The depth of the complete state graph search is 2.
+@!@!@ENDMSG 2194 @!@!@
+@!@!@STARTMSG 2268:0 @!@!@
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 1 and the 95th percentile is 1).
+@!@!@ENDMSG 2268 @!@!@
+@!@!@STARTMSG 2186:0 @!@!@
+Finished in 816ms at (2025-03-23 16:44:24)
+@!@!@ENDMSG 2186 @!@!@

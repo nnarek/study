@@ -1,0 +1,221 @@
+@!@!@STARTMSG 2262:0 @!@!@
+TLC2 Version 2.16 of 31 December 2020 (rev: cdddf55)
+@!@!@ENDMSG 2262 @!@!@
+@!@!@STARTMSG 2187:0 @!@!@
+Running breadth-first search Model-Checking with fp 24 and seed -1904453882259655133 with 2 workers on 4 cores with 1204MB heap and 2705MB offheap memory [pid: 40348] (Windows 10 10.0 amd64, AdoptOpenJDK 14.0.1 x86_64, OffHeapDiskFPSet, DiskStateQueue).
+@!@!@ENDMSG 2187 @!@!@
+@!@!@STARTMSG 2220:0 @!@!@
+Starting SANY...
+@!@!@ENDMSG 2220 @!@!@
+Parsing file C:\lamport\tla\web\tutorial\Session3a.toolbox\Model_1\MC.tla
+Parsing file C:\lamport\tla\web\tutorial\Session3a.toolbox\Model_1\Session3a.tla
+Labels added.
+Parsing file C:\lamport\mytemp\toolbox\TLAToolbox-1.7.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202012311918\tla2sany\StandardModules\TLC.tla
+Parsing file C:\lamport\mytemp\toolbox\TLAToolbox-1.7.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202012311918\tla2sany\StandardModules\Integers.tla
+Parsing file C:\lamport\mytemp\toolbox\TLAToolbox-1.7.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202012311918\tla2sany\StandardModules\Sequences.tla
+Parsing file C:\lamport\mytemp\toolbox\TLAToolbox-1.7.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202012311918\tla2sany\StandardModules\Naturals.tla
+Parsing file C:\lamport\mytemp\toolbox\TLAToolbox-1.7.0-win32.win32.x86_64\toolbox\plugins\org.lamport.tlatools_1.0.0.202012311918\tla2sany\StandardModules\FiniteSets.tla
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module Session3a
+Semantic processing of module MC
+@!@!@STARTMSG 2219:0 @!@!@
+SANY finished.
+@!@!@ENDMSG 2219 @!@!@
+@!@!@STARTMSG 2185:0 @!@!@
+Starting... (2021-01-08 17:24:26)
+@!@!@ENDMSG 2185 @!@!@
+@!@!@STARTMSG 2189:0 @!@!@
+Computing initial states...
+@!@!@ENDMSG 2189 @!@!@
+@!@!@STARTMSG 2190:0 @!@!@
+Finished computing initial states: 1 distinct state generated at 2021-01-08 17:24:27.
+@!@!@ENDMSG 2190 @!@!@
+@!@!@STARTMSG 2132:1 @!@!@
+The first argument of Assert evaluated to FALSE; the second argument was:
+"Failure of assertion at line 18, column 6."
+@!@!@ENDMSG 2132 @!@!@
+@!@!@STARTMSG 2121:1 @!@!@
+The behavior up to this point is:
+@!@!@ENDMSG 2121 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+1: <Initial predicate>
+/\ i = 2
+/\ pc = "Lbl_1"
+/\ inp = <<1, 3, 2>>
+/\ max = None
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+2: <Lbl_1 line 36, col 10 to line 42, col 34 of module Session3a>
+/\ i = 2
+/\ pc = "Lbl_2"
+/\ inp = <<1, 3, 2>>
+/\ max = 1
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+3: <Lbl_2 line 44, col 10 to line 54, col 22 of module Session3a>
+/\ i = 3
+/\ pc = "Lbl_2"
+/\ inp = <<1, 3, 2>>
+/\ max = 3
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+4: <Lbl_2 line 44, col 10 to line 54, col 22 of module Session3a>
+/\ i = 4
+/\ pc = "Lbl_2"
+/\ inp = <<1, 3, 2>>
+/\ max = 3
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2217:4 @!@!@
+5: <Lbl_2 line 44, col 10 to line 54, col 22 of module Session3a>
+/\ i = 4
+/\ pc = "Lbl_3"
+/\ inp = <<1, 3, 2>>
+/\ max = 3
+
+@!@!@ENDMSG 2217 @!@!@
+@!@!@STARTMSG 2103:1 @!@!@
+The error occurred when TLC was evaluating the nested
+expressions at the following positions:
+0. Line 56, column 10 to line 62, column 39 in Session3a
+1. Line 56, column 13 to line 56, column 24 in Session3a
+2. Line 57, column 13 to line 60, column 64 in Session3a
+
+
+@!@!@ENDMSG 2103 @!@!@
+@!@!@STARTMSG 2201:0 @!@!@
+The coverage statistics at 2021-01-08 17:24:27
+@!@!@ENDMSG 2201 @!@!@
+@!@!@STARTMSG 2773:0 @!@!@
+<Init line 30, col 1 to line 30, col 4 of module Session3a>: 2:2
+@!@!@ENDMSG 2773 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 31, col 9 to line 34, col 23 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Lbl_1 line 36, col 1 to line 36, col 5 of module Session3a>: 1:2
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 36, col 13 to line 36, col 24 of module Session3a: 12
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 36, col 13 to line 36, col 14 of module Session3a: 10
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 37, col 16 to line 37, col 27 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 38, col 21 to line 39, col 36 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 40, col 24 to line 40, col 36 of module Session3a: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 41, col 24 to line 41, col 33 of module Session3a: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 42, col 13 to line 42, col 34 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Lbl_2 line 44, col 1 to line 44, col 5 of module Session3a>: 3:6
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 44, col 13 to line 44, col 24 of module Session3a: 15
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 44, col 13 to line 44, col 14 of module Session3a: 9
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 45, col 16 to line 45, col 28 of module Session3a: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 46, col 27 to line 46, col 38 of module Session3a: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 47, col 32 to line 47, col 47 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 48, col 32 to line 49, col 44 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 50, col 24 to line 50, col 33 of module Session3a: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 51, col 24 to line 51, col 36 of module Session3a: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 52, col 24 to line 52, col 36 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 53, col 24 to line 53, col 45 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 54, col 13 to line 54, col 22 of module Session3a: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Lbl_3 line 56, col 1 to line 56, col 5 of module Session3a>: 0:0
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 56, col 13 to line 56, col 24 of module Session3a: 6
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 57, col 20 to line 59, col 79 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 57, col 23 to line 57, col 33 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |line 58, col 43 to line 59, col 79 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 58, col 44 to line 58, col 78 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 58, col 67 to line 58, col 78 of module Session3a: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 58, col 53 to line 58, col 63 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  ||line 59, col 44 to line 59, col 78 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 59, col 67 to line 59, col 78 of module Session3a: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  |||line 59, col 53 to line 59, col 63 of module Session3a: 2
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 61, col 13 to line 61, col 24 of module Session3a: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 62, col 13 to line 62, col 39 of module Session3a: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2772:0 @!@!@
+<Terminating line 65, col 1 to line 65, col 11 of module Session3a>: 0:0
+@!@!@ENDMSG 2772 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 65, col 16 to line 65, col 26 of module Session3a: 4
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2221:0 @!@!@
+  line 65, col 31 to line 65, col 44 of module Session3a: 0
+@!@!@ENDMSG 2221 @!@!@
+@!@!@STARTMSG 2202:0 @!@!@
+End of statistics.
+@!@!@ENDMSG 2202 @!@!@
+@!@!@STARTMSG 2200:0 @!@!@
+Progress(5) at 2021-01-08 17:24:27: 5 states generated (120 s/min), 5 distinct states found (120 ds/min), 0 states left on queue.
+@!@!@ENDMSG 2200 @!@!@
+@!@!@STARTMSG 2199:0 @!@!@
+5 states generated, 5 distinct states found, 0 states left on queue.
+@!@!@ENDMSG 2199 @!@!@
+@!@!@STARTMSG 2186:0 @!@!@
+Finished in 2504ms at (2021-01-08 17:24:27)
+@!@!@ENDMSG 2186 @!@!@
