@@ -37,3 +37,7 @@
 [submodule "pnp-coq"]
 	path = pnp-coq
 	url = https://github.com/nnarek/pnp-coq
+[submodule "learn-prolog-now"]
+	path = learn-prolog-now
+	url = https://github.com/nnarek/learn-prolog-now
+	branch = solutions

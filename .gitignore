@@ -54,7 +54,8 @@
 !experiments/sygus/
 !experiments/sygus/*.sl
 
-!.gitignore
+# same writing !/.gitignore
+!.gitignore  
 
 
 !plfa
@@ -83,3 +84,5 @@
 !HTPILeanPackage/*
 !pnp-coq
 !pnp-coq/*
+!learn-prolog-now
+!learn-prolog-now/*
