@@ -1,45 +1,46 @@
 // URL: https://leetgpu.com/challenges/reduction
 // GPU: NVIDIA TESLA T4
-// Runtime: 1.74755 ms
+// Runtime: 1.43057 ms
 #include "solve.h"
 #include <cuda_runtime.h>
+#include <cooperative_groups.h>
 #include <iostream>
 
-constexpr int threadsPerBlock = 1024;
-#define FULL_MASK 0xffffffff
+constexpr int threadsPerBlock = 256;
+
+namespace cg = cooperative_groups;
 
 __global__ void sum(const float* input, float* output, int N) {
     constexpr int warpSize = 32;
-    constexpr int numWarpsPerBlock = threadsPerBlock/warpSize;
-    __shared__ float warp_sums[numWarpsPerBlock]; // sum reduction output of each warp
+    constexpr int numWarpsPerBlock = threadsPerBlock / warpSize;
+    __shared__ float warp_sums[numWarpsPerBlock];
 
-    int idx = (blockIdx.x * blockDim.x) + threadIdx.x;
-    int warpIdx = threadIdx.x/warpSize;
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    float val = (idx < N) ? input[idx] : 0.0f;
 
-    float val;
-    if(idx < N) {
-        val = input[idx];
-    } else {
-        val = 0.0f;
-    }
-    __syncwarp();
+    cg::thread_block block = cg::this_thread_block(); // all threads of current block
+    cg::thread_block_tile<warpSize> warp = cg::tiled_partition<warpSize>(block); // split threads of block into threadsPerBlock/warpSize thread block tiles where each one have warpSize threads
+    
     #pragma unroll
-    for (int offset = warpSize/2; offset > 0; offset /= 2) {
-        val += __shfl_down_sync(FULL_MASK, val, offset);
+    for (int offset = warpSize / 2; offset > 0; offset /= 2) {
+        val += warp.shfl_down(val, offset); // same as __shfl_down, work only for thread block tiles which size is less than 32
     }
-    if((threadIdx.x%warpSize) == 0) {//first thread of each warp
-        warp_sums[warpIdx] = val;
-    }
-    __syncthreads();
 
-    if(warpIdx == 0) { // first warp of current block
-        val = warp_sums[threadIdx.x];
-        __syncwarp();
+    if (warp.thread_rank() == 0) { // warp.thread_rank() == threadIdx.x % warpSize which is same as id of thread inside its thread_block_tile
+        warp_sums[warp.meta_group_rank()] = val; // warp.meta_group_rank() == threadIdx.x/warpSize which is same as id of thread_block_tile inside block
+    }
+
+    block.sync(); // same as __syncthread();
+
+    if (warp.meta_group_rank() == 0) {
+        val = warp.thread_rank() < numWarpsPerBlock ? warp_sums[warp.thread_rank()] : 0.0f;
+        //cg::sync(warp); // not needed here, but equivalent to __syncwarp() if number of threads in thread_block_tile is 32
         #pragma unroll
-        for (int offset = numWarpsPerBlock/2; offset > 0; offset /= 2) {
-            val += __shfl_down_sync(FULL_MASK, val, offset);
+        for (int offset = numWarpsPerBlock / 2; offset > 0; offset /= 2) {
+            val += warp.shfl_down(val, offset);
         }
-        if(threadIdx.x == 0) {
+
+        if (warp.thread_rank() == 0) {
             output[blockIdx.x] = val;
         }
     }
