@@ -1,6 +1,6 @@
 // URL: https://leetgpu.com/challenges/vector-addition
 // GPU: NVIDIA TESLA T4
-// Runtime: 1.15245 ms
+// Runtime: 1.14833 ms
 #include "solve.h"
 #include <cuda_runtime.h>
 
