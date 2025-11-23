@@ -7,4 +7,4 @@ import SciLean
 open Real
 open SciLean
 
-example : deriv sin π = -1 := by simp
+example : deriv sin π = -1 := by simp -- use ftrans instead

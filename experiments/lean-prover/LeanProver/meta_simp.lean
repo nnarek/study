@@ -8,6 +8,7 @@ open Lean Meta
   let expr := mkAppN (mkConst ``Nat.add) #[zero, mkAppN (mkConst ``Nat.add) #[x, zero]]
   
   let simpTheorems ← getSimpTheorems
+  -- let simpTheorems ← simpTheorems.addConst `your_theorem --use to add new theorem 
   let ctx ← Simp.mkContext (simpTheorems := #[simpTheorems])
 
   let (result, _) ← simp expr ctx
