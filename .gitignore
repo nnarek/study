@@ -40,6 +40,12 @@
 !leetgpu/*.cu
 !leetgpu/download.ipynb
 
+!cryptohack
+!cryptohack/*.ipynb
+!cryptohack/*/
+!cryptohack/*/*
+
+
 !experiments/
 
 !experiments/coq/
