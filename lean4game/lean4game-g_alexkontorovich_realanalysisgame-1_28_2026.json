@@ -1,0 +1,376 @@
+{
+  "inventory": [
+    "apply",
+    "[anonymous]",
+    "rfl",
+    "rewrite",
+    "ring_nf",
+    "use",
+    "intro",
+    "specialize",
+    "choose",
+    "have",
+    "change",
+    "norm_num",
+    "SeqLim",
+    "ConstLim",
+    "bound",
+    "push_cast",
+    "ArchProp",
+    "exact_mod_cast",
+    "field_simp",
+    "linarith",
+    "OneOverNLimZero",
+    "abs_add",
+    "abs_neg",
+    "SeqConv",
+    "abs_mul"
+  ],
+  "readIntro": true,
+  "data": {
+    "null": {
+      "readIntro": false
+    },
+    "RealAnalysisStory": {
+      "1": {
+        "code": "apply h\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 2,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 2,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "2": {
+        "code": "rfl\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 2,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 2,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "3": {
+        "code": "rewrite [Bob]\r\nrfl\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 3,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 3,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "4": {
+        "code": "ring_nf\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 1,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 1,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "5": {
+        "code": "use 6\r\nring_nf",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 2,
+            "selectionStartColumn": 8,
+            "positionLineNumber": 2,
+            "positionColumn": 8
+          }
+        ],
+        "help": []
+      },
+      "6": {
+        "code": "intro ε h\r\nrfl\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 3,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 3,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "7": {
+        "code": "specialize hf t t_pos\r\napply hf\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 3,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 3,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "8": {
+        "code": "choose c hc using h\r\nuse c\r\nrewrite [hc]\r\nring_nf\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 5,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 5,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "9": {
+        "code": "choose a ha using h_existential\r\nuse a\r\nintro y hy\r\nrewrite [h_universal y hy]\r\nrewrite [ha]\r\nring_nf\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 7,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 7,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    },
+    "L1Pset": {
+      "1": {
+        "code": "use (2*3+1)\r\napply h\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 3,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 3,
+            "positionColumn": 1
+          }
+        ],
+        "help": []
+      },
+      "2": {
+        "code": "use 4\r\nintro x y h1 h2\r\nring_nf\r\nrewrite [h2]\r\nhave h : 1 * 2 + x ^ 2 + y ^ 2 = 2 + (x ^ 2 + y ^ 2) := by ring_nf\r\nrewrite [h,h1]\r\nring_nf\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 7,
+            "selectionStartColumn": 6,
+            "positionLineNumber": 7,
+            "positionColumn": 6
+          }
+        ],
+        "help": []
+      },
+      "3": {
+        "code": "specialize h1 0 \r\nrewrite [h2] at h1\r\nring_nf at h1\r\napply h1",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 4,
+            "selectionStartColumn": 9,
+            "positionLineNumber": 4,
+            "positionColumn": 9
+          }
+        ],
+        "help": []
+      },
+      "4": {
+        "code": "have g1 := h1 0\r\nhave g2 := h1 1\r\nrewrite [h2] at g1\r\nring_nf at g1\r\nrewrite [g1] at g2\r\nring_nf at g2\r\napply g2\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 7,
+            "selectionStartColumn": 9,
+            "positionLineNumber": 7,
+            "positionColumn": 9
+          }
+        ],
+        "help": []
+      },
+      "5": {
+        "code": "use 15\r\nspecialize h1 x\r\nrewrite [h2] at h1\r\nrewrite [h1]\r\nrfl ",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 5,
+            "selectionStartColumn": 4,
+            "positionLineNumber": 5,
+            "positionColumn": 4
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    },
+    "NewtonsCalculationOfPi": {
+      "1": {
+        "code": "intro ε ε0\r\nuse 0\r\nintro n hn0\r\nrewrite [a_const n]\r\nnorm_num\r\nring_nf \r\napply ε0",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 7,
+            "selectionStartColumn": 8,
+            "positionLineNumber": 7,
+            "positionColumn": 8
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    },
+    "Lecture3": {
+      "1": {
+        "code": "use ⌈1 / ε⌉₊ + 1\r\nhave fact : 1 / ε ≤ ⌈1 / ε⌉₊ := by bound\r\npush_cast\r\nbound",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 1,
+            "selectionStartColumn": 1,
+            "positionLineNumber": 1,
+            "positionColumn": 1
+          }
+        ],
+        "help": [
+          0,
+          1
+        ]
+      },
+      "2": {
+        "code": "intro ε ε0 \r\nuse ⌈1 / ε⌉₊ + 1 \r\nintro n hn\r\nrewrite [ha n]\r\nhave : 1 / ε > 0 := by field_simp; linarith\r\nhave h1 : ⌈1 / ε ⌉₊ + 1 >= 1 := by linarith\r\nhave h2 : n >= 1 := by linarith[hn,h1]\r\nhave h3 : ↑n >= (1:ℝ) := by exact_mod_cast h2\r\n\r\nhave h4 : (1:ℝ) / ↑n >= 0 := by field_simp; linarith [h3]\r\nhave h5 : |(1:ℝ) / ↑n - 0| = 1 / ↑n := by bound [h4]\r\nrewrite [h5]\r\n\r\nhave h6 : 1 / ε ≤ ⌈1 / ε⌉₊ := by bound\r\nhave : 1 / ε ≤ ⌈1 / ε⌉₊ + 1 := by bound\r\nhave h7 : ⌈1 / ε⌉₊ < n := by bound\r\n\r\nhave : ⌈1 / ε⌉₊ < (n:ℝ) := by exact_mod_cast h7\r\nhave h8 : 1/ε < n := by bound[h6,h7]\r\n\r\nfield_simp at *\r\napply h8",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 2,
+            "selectionStartColumn": 18,
+            "positionLineNumber": 2,
+            "positionColumn": 18
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    },
+    "L2Pset": {
+      "1": {
+        "code": "ring_nf\r\nuse 21/512-7/512\r\nintro x\r\nring_nf",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 2,
+            "selectionStartColumn": 17,
+            "positionLineNumber": 2,
+            "positionColumn": 17
+          }
+        ],
+        "help": []
+      },
+      "2": {
+        "code": "ring_nf\r\nuse 3/8,-1/16,3/128\r\nintro\r\nring_nf\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 4,
+            "selectionStartColumn": 8,
+            "positionLineNumber": 4,
+            "positionColumn": 8
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    },
+    "L3Pset": {
+      "1": {
+        "code": "use ⌈y / x⌉₊ + 1\r\nhave h1 : y/x <= ↑⌈y / x⌉₊ := by bound\r\nhave h2 : y/x < ↑⌈y / x⌉₊ + 1 := by bound[h1]\r\nfield_simp at h2\r\nexact_mod_cast h2",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 5,
+            "selectionStartColumn": 18,
+            "positionLineNumber": 5,
+            "positionColumn": 18
+          }
+        ],
+        "help": []
+      },
+      "2": {
+        "code": "--almost all proof is copied from my proof of OneOverNLimZero \r\n\r\nuse 1\r\nintro ε ε0 \r\nuse ⌈1 / ε⌉₊ + 1 \r\nintro n hn\r\nrewrite [ha n]\r\nhave : 1 / ε > 0 := by field_simp; linarith\r\nhave h1 : ⌈1 / ε ⌉₊ + 1 >= 1 := by linarith\r\nhave h2 : n >= 1 := by linarith[hn,h1]\r\nhave h3 : ↑n >= (1:ℝ) := by exact_mod_cast h2\r\n\r\nhave h4 : (1:ℝ) / ↑n >= 0 := by field_simp; linarith [h3]\r\n\r\nhave : (↑n + 1) / ↑n - 1 = (1:ℝ) / ↑n := by ring_nf; field_simp; linarith\r\nhave h5 : |(1:ℝ) / ↑n| = 1 / ↑n := by bound [h4]\r\nrewrite [this,h5]\r\n\r\nhave h6 : 1 / ε ≤ ⌈1 / ε⌉₊ := by bound\r\nhave : 1 / ε ≤ ⌈1 / ε⌉₊ + 1 := by bound\r\nhave h7 : ⌈1 / ε⌉₊ < n := by bound\r\n\r\nhave : ⌈1 / ε⌉₊ < (n:ℝ) := by exact_mod_cast h7\r\nhave h8 : 1/ε < n := by bound[h6,h7]\r\n\r\nfield_simp at *\r\napply h8\r\n\r\n",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 1,
+            "selectionStartColumn": 19,
+            "positionLineNumber": 1,
+            "positionColumn": 19
+          }
+        ],
+        "help": []
+      },
+      "3": {
+        "code": "use 0\r\nintro ε ε0 \r\nuse ⌈(1 / ε + 1)^(1/2) ⌉₊\r\nintro n hn\r\nrewrite [ha n]\r\n\r\nhave : 1 / ε > 0 := by field_simp; linarith\r\nhave h1 : ⌈1 / ε ⌉₊ + 1 >= 1 := by linarith\r\nhave : n^2 ≥ (⌈1 / ε⌉₊ + 1) := by sorry\r\nhave n_pos' : n ≠ 0 := by sorry\r\nhave h2' : n^2 < 1 → False := by intro h; apply n_pos'; bound[h];\r\nhave h2 : n^2 >= 1 := by sorry  --linarith[hn,h1]\r\nhave h3 : ↑n^2 >= (1:ℝ) := by exact_mod_cast h2\r\n\r\nhave h4 : (1:ℝ) / ↑n^2 >= 0 := by field_simp; bound [h3]\r\nhave h5 : |(1:ℝ) / ↑n^2 - 0| = (1:ℝ) / ↑n^2 := by bound [h4]\r\nrewrite [h5]\r\n\r\nhave h6 : 1 / ε ≤ ⌈1 / ε⌉₊ := by bound\r\nhave : 1 / ε ≤ ⌈1 / ε⌉₊ + 1 := by bound\r\nhave h7 : ⌈1 / ε⌉₊ < n^2 := by bound\r\n\r\nhave : ⌈1 / ε⌉₊ < (n:ℝ)^2 := by exact_mod_cast h7\r\nhave h8 : 1/ε < n^2 := by bound[h6,h7]\r\n\r\n-- needed by field_simp to simplify \"1 / ↑n ^ 2 < ε\" goal\r\nhave n_pos : n ≠ 0 := by intro heq; rewrite[heq] at h2; norm_num at h2\r\n \r\nfield_simp at *\r\n\r\napply h8",
+        "completed": false,
+        "selections": [
+          {
+            "selectionStartLineNumber": 12,
+            "selectionStartColumn": 26,
+            "positionLineNumber": 12,
+            "positionColumn": 26
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    },
+    "Lecture4": {
+      "1": {
+        "code": "intro h\r\nchoose lim hl using h\r\nspecialize hl 0.5 (by bound)\r\nchoose N hN using hl\r\nhave h1 := hN (2*N + 1) (by bound) \r\nhave h0 := hN (2*N) (by bound) \r\nhave h2 : a (2 * N + 1) = -1 := by rewrite[ha]; norm_num\r\nhave h3 : a (2 * N) = 1 := by rewrite[ha]; norm_num\r\nrewrite [h2] at h1\r\nrewrite [h3] at h0\r\n\r\nhave : -1 - lim = -(1 + lim) := by ring_nf\r\nrewrite [this,abs_neg] at h1\r\n\r\nhave : |(1 + lim) + (1 - lim)| <= |1 + lim| + |1 - lim| := by apply abs_add\r\nhave : |(1 + lim) + (1 - lim)| = 2 := by ring_nf; norm_num\r\nhave : |1 + lim| + |1 - lim| < 1 := by bound\r\nbound",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 18,
+            "selectionStartColumn": 6,
+            "positionLineNumber": 18,
+            "positionColumn": 6
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    },
+    "Lecture5": {
+      "1": {
+        "code": "intro ε hε0 \r\nspecialize h (ε/2) (by bound)\r\nchoose N hN using h\r\n\r\nuse N\r\nintro n hn\r\nrewrite [b_scaled]\r\nspecialize hN n hn\r\nfield_simp at hN\r\nhave : 2 = |(2:ℝ)| := by norm_num\r\nrewrite [this,← abs_mul] at hN\r\nring_nf at *\r\napply hN",
+        "completed": true,
+        "selections": [
+          {
+            "selectionStartLineNumber": 13,
+            "selectionStartColumn": 7,
+            "positionLineNumber": 13,
+            "positionColumn": 7
+          }
+        ],
+        "help": []
+      },
+      "readIntro": false
+    }
+  },
+  "difficulty": 2,
+  "typewriterMode": false
+}
