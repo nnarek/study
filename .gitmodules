@@ -41,3 +41,6 @@
 	path = learn-prolog-now
 	url = https://github.com/nnarek/learn-prolog-now
 	branch = solutions
+[submodule "zero-knowledge-puzzles"]
+	path = zero-knowledge-puzzles
+	url = https://github.com/nnarek/zero-knowledge-puzzles
